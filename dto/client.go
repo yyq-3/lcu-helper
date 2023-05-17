@@ -8,6 +8,8 @@ import "sync"
  **/
 type ClientStatus struct {
 	ProcessName string
-	Lock        sync.Locker
+	Lock        sync.RWMutex
 	Status      bool
+	Port        int
+	Token       string
 }
