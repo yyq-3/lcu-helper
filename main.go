@@ -1,6 +1,10 @@
 package lcu_helper
 
-import "lcu-helper/listener"
+import (
+	"fmt"
+	"github.com/sacOO7/gowebsocket"
+	"lcu-helper/listener"
+)
 
 /**
  * @Author Yongqi.Yang
@@ -8,6 +12,11 @@ import "lcu-helper/listener"
  **/
 
 func main() {
+	// 申请管理员权限
+
+	// 连接socket
+	port := uint8(2)
+	socket := gowebsocket.New(fmt.Sprintf("ws://127.0.0.1:%d", port))
 	// start process listener
 	go listener.StartClientListen()
 	// hold main thread
