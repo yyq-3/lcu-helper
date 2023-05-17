@@ -45,16 +45,16 @@ func (mLog *MyLog) Format(entry *logrus.Entry) ([]byte, error) {
 	}
 
 	timestamp := entry.Time.Format("2006/01/02 15:04:05.000")
-	_, err := fmt.Fprintf(b, "\x1B[%dm%s %s\x1B[0m \n", color, timestamp, entry.Message)
+	_, err := fmt.Fprintf(b, "\x1b[%dm%s %s\x1b[0m\n", color, timestamp, entry.Message)
 	return b.Bytes(), err
 }
 
 func Info(args ...interface{}) {
 	Init()
-	logrus.Info(args)
+	logrus.Infoln(args)
 }
 
 func Infof(str string, args ...interface{}) {
 	Init()
-	logrus.Info(str, args)
+	logrus.Infof(str, args...)
 }

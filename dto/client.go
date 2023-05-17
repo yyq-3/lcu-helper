@@ -7,9 +7,11 @@ import "sync"
  * @Date $ $
  **/
 type ClientStatus struct {
-	ProcessName string
-	Lock        sync.RWMutex
-	Status      bool
-	Port        int
-	Token       string
+	ProcessName   string
+	Lock          sync.RWMutex
+	Status        bool
+	Port          int
+	Token         string
+	Pid           uint32
+	WebSocketAddr string
 }

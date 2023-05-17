@@ -1,10 +1,14 @@
 package listener
 
 import (
+	"fmt"
+	"github.com/sacOO7/gowebsocket"
 	"lcu-helper/dto"
 	"lcu-helper/global"
 	"lcu-helper/logger"
 	"lcu-helper/util"
+	"regexp"
+	"strconv"
 	"time"
 )
 
@@ -26,14 +30,43 @@ func StartClientListen() {
 func handler(client *dto.ClientStatus) {
 	if util.ProcessIsRun(client.ProcessName) {
 		updateStatus()
-		logger.Info("检测到客户端启动")
+		logger.Infof("检测到客户端启动,进程PID：%d", global.ClientUx.Pid)
 		logger.Info("开始获取端口和Token")
-
-		logger.Infof("获取到Port: %d, Token: %s")
+		for i := 0; i < 10; i++ {
+			if !getPortAndToken() {
+				logger.Infof("获取失败,正在进行第%d次重试.....", i+1)
+			} else {
+				break
+			}
+		}
+		logger.Infof("获取到Port: %d, Token: %s", global.ClientUx.Port, global.ClientUx.Token)
 		logger.Info("开始连接游戏客户端........")
+		// 连接socket
+		global.ClientSocket = gowebsocket.New(global.ClientUx.WebSocketAddr)
+		logger.Infof("%v", global.ClientSocket)
 	} else {
 		logger.Info("未检测到客户端启动")
 	}
+}
+
+func getPortAndToken() bool {
+	cmdline, _ := util.GetCmdline(global.ClientUx.Pid)
+	if cmdline == "" {
+		return false
+	}
+	reg := regexp.MustCompile(`--remoting-auth-token=(.+?)" "--app-port=(\d+)"`)
+	argArray := reg.FindSubmatch([]byte(cmdline))
+	if len(argArray) < 3 {
+		return false
+	}
+	global.ClientUx.Token = string(argArray[1])
+	port, err := strconv.Atoi(string(argArray[2]))
+	if err != nil {
+		return false
+	}
+	global.ClientUx.Port = port
+	global.ClientUx.WebSocketAddr = fmt.Sprintf("ws://127.0.0.1:%d", port)
+	return true
 }
 
 func updateStatus() {

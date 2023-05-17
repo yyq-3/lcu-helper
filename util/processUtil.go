@@ -1,6 +1,9 @@
 package util
 
 import (
+	"golang.org/x/sys/windows"
+	"lcu-helper/global"
+	"reflect"
 	"syscall"
 	"unsafe"
 )
@@ -25,14 +28,6 @@ type PROCESSENTRY32 struct {
 
 func ProcessIsRun(processName string) bool {
 	return GetProcessList(processName)
-	//processList, _ := process.Processes()
-	//for _, proc := range processList {
-	//	name, _ := proc.Name()
-	//	if name == processName {
-	//		return true
-	//	}
-	//}
-	//return false
 }
 
 func GetProcessList(processName string) bool {
@@ -70,6 +65,7 @@ func GetProcessList(processName string) bool {
 				}
 			}
 			if processName == Byte2str(temp) {
+				global.ClientUx.Pid = proc.th32ProcessID
 				return true
 			}
 		} else {
@@ -77,4 +73,57 @@ func GetProcessList(processName string) bool {
 		}
 	}
 	return false
+}
+
+func GetCmdline(pid uint32) (string, error) {
+	h, err := windows.OpenProcess(windows.PROCESS_QUERY_INFORMATION|windows.PROCESS_VM_READ, false, pid)
+	if err != nil {
+		if e, ok := err.(windows.Errno); ok && e == windows.ERROR_ACCESS_DENIED {
+			return "", nil // 没权限,忽略这个进程
+		}
+		return "", err
+	}
+	defer func() {
+		_ = windows.CloseHandle(h)
+	}()
+	var pbi struct {
+		ExitStatus                   uint32
+		PebBaseAddress               uintptr
+		AffinityMask                 uintptr
+		BasePriority                 int32
+		UniqueProcessID              uintptr
+		InheritedFromUniqueProcessID uintptr
+	}
+	pbiLen := uint32(unsafe.Sizeof(pbi))
+	err = windows.NtQueryInformationProcess(h, windows.ProcessBasicInformation, unsafe.Pointer(&pbi), pbiLen, &pbiLen)
+	if err != nil {
+		return "", err
+	}
+	var addr uint64
+	d := *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
+		Data: uintptr(unsafe.Pointer(&addr)),
+		Len:  8, Cap: 8}))
+	err = windows.ReadProcessMemory(h, pbi.PebBaseAddress+32,
+		&d[0], uintptr(len(d)), nil)
+	if err != nil {
+		return "", err
+	}
+	var commandLine windows.NTUnicodeString
+	Len := unsafe.Sizeof(commandLine)
+	d = *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
+		Data: uintptr(unsafe.Pointer(&commandLine)),
+		Len:  int(Len), Cap: int(Len)}))
+	err = windows.ReadProcessMemory(h, uintptr(addr+112),
+		&d[0], Len, nil)
+	if err != nil {
+		return "", err
+	}
+	cmdData := make([]uint16, commandLine.Length/2)
+	d = *(*[]byte)(unsafe.Pointer(&cmdData))
+	err = windows.ReadProcessMemory(h, uintptr(unsafe.Pointer(commandLine.Buffer)),
+		&d[0], uintptr(commandLine.Length), nil)
+	if err != nil {
+		return "", err
+	}
+	return windows.UTF16ToString(cmdData), nil
 }
