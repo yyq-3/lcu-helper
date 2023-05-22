@@ -1,14 +1,12 @@
 package global
 
 import (
-	"github.com/sacOO7/gowebsocket"
-	"lcu-helper/dto"
+	"lcu-helper/model"
 )
 
-var ClientUx = &dto.ClientStatus{
-	ProcessName: "LeagueClientUx.exe",
-	Port:        0,
-	Token:       "",
-}
+var JsonEventPrefixLen = len(`[8,"OnJsonApiEvent",`)
+var MyGameInfo = &model.UserInfo{}
 
-var ClientSocket gowebsocket.Socket
+const (
+	GameFlowPhase = "/lol-gameflow/v1/gameflow-phase"
+)

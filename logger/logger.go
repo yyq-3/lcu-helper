@@ -12,20 +12,11 @@ import (
 var myLog = new(MyLog)
 var base = 0.123456
 
-func Init() {
+func initialize() {
 	logrus.SetLevel(logrus.TraceLevel)
 	logrus.SetFormatter(myLog)
-
 	logrus.SetOutput(colorable.NewColorableStdout())
 }
-
-//颜色
-const (
-	red    = 31
-	yellow = 33
-	blue   = 36
-	gray   = 37
-)
 
 type MyLog struct {
 	Color int
@@ -50,11 +41,11 @@ func (mLog *MyLog) Format(entry *logrus.Entry) ([]byte, error) {
 }
 
 func Info(args ...interface{}) {
-	Init()
+	initialize()
 	logrus.Infoln(args)
 }
 
 func Infof(str string, args ...interface{}) {
-	Init()
+	initialize()
 	logrus.Infof(str, args...)
 }

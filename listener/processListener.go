@@ -2,35 +2,31 @@ package listener
 
 import (
 	"fmt"
-	"github.com/sacOO7/gowebsocket"
-	"lcu-helper/dto"
-	"lcu-helper/global"
+	"lcu-helper/lcu"
 	"lcu-helper/logger"
-	"lcu-helper/util"
+	"lcu-helper/os/windows/admin"
 	"regexp"
 	"strconv"
 	"time"
 )
 
-/**
- * @Author Yongqi.Yang
- * @Date $ $
- **/
-
 func StartClientListen() {
 	for {
-		if !global.ClientUx.Status {
-			handler(global.ClientUx)
+		if !lcu.ClientUx.Status {
+			b := handler(lcu.ClientUx)
+			if b {
+				return
+			}
 		}
 		// sleep 1 second
 		time.Sleep(time.Duration(time.Second))
 	}
 }
 
-func handler(client *dto.ClientStatus) {
-	if util.ProcessIsRun(client.ProcessName) {
+func handler(client *lcu.ClientStatus) bool {
+	if admin.ProcessIsRun(client.ProcessName) {
 		updateStatus()
-		logger.Infof("检测到客户端启动,进程PID：%d", global.ClientUx.Pid)
+		logger.Infof("检测到客户端启动,进程PID：%d", lcu.ClientUx.Pid)
 		logger.Info("开始获取端口和Token")
 		for i := 0; i < 10; i++ {
 			if !getPortAndToken() {
@@ -39,18 +35,17 @@ func handler(client *dto.ClientStatus) {
 				break
 			}
 		}
-		logger.Infof("获取到Port: %d, Token: %s", global.ClientUx.Port, global.ClientUx.Token)
+		logger.Infof("获取到Port: %d, Token: %s", lcu.ClientUx.Port, lcu.ClientUx.Token)
 		logger.Info("开始连接游戏客户端........")
-		// 连接socket
-		global.ClientSocket = gowebsocket.New(global.ClientUx.WebSocketAddr)
-		logger.Infof("%v", global.ClientSocket)
+		return true
 	} else {
 		logger.Info("未检测到客户端启动")
+		return false
 	}
 }
 
 func getPortAndToken() bool {
-	cmdline, _ := util.GetCmdline(global.ClientUx.Pid)
+	cmdline, _ := admin.GetCmdline(lcu.ClientUx.Pid)
 	if cmdline == "" {
 		return false
 	}
@@ -59,18 +54,20 @@ func getPortAndToken() bool {
 	if len(argArray) < 3 {
 		return false
 	}
-	global.ClientUx.Token = string(argArray[1])
+	lcu.ClientUx.Token = string(argArray[1])
 	port, err := strconv.Atoi(string(argArray[2]))
 	if err != nil {
 		return false
 	}
-	global.ClientUx.Port = port
-	global.ClientUx.WebSocketAddr = fmt.Sprintf("ws://127.0.0.1:%d", port)
+	lcu.ClientUx.Port = port
+	lcu.ClientUx.WebSocketAddr = fmt.Sprintf("wss://127.0.0.1:%d", port)
+	lcu.ClientUx.ApiAddr = fmt.Sprintf("https://riot:%s@127.0.0.1:%d", lcu.ClientUx.Token, port)
+	logger.Infof("lcuApi %s", lcu.ClientUx.ApiAddr)
 	return true
 }
 
 func updateStatus() {
-	global.ClientUx.Lock.Lock()
-	defer global.ClientUx.Lock.Unlock()
-	global.ClientUx.Status = true
+	lcu.ClientUx.Lock.Lock()
+	defer lcu.ClientUx.Lock.Unlock()
+	lcu.ClientUx.Status = true
 }

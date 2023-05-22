@@ -1,17 +1,13 @@
-package util
+package admin
 
 import (
 	"golang.org/x/sys/windows"
-	"lcu-helper/global"
+	"lcu-helper/lcu"
+	"lcu-helper/util"
 	"reflect"
 	"syscall"
 	"unsafe"
 )
-
-/**
- * @Author Yongqi.Yang
- * @Date $ $
- **/
 
 type PROCESSENTRY32 struct {
 	dwSize              uint32    // 结构大小
@@ -64,8 +60,8 @@ func GetProcessList(processName string) bool {
 					temp = append(temp, b)
 				}
 			}
-			if processName == Byte2str(temp) {
-				global.ClientUx.Pid = proc.th32ProcessID
+			if processName == util.Byte2str(temp) {
+				lcu.ClientUx.Pid = proc.th32ProcessID
 				return true
 			}
 		} else {

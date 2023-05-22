@@ -1,6 +1,7 @@
 package main
 
 import (
+	"lcu-helper/lcu"
 	"lcu-helper/listener"
 	"lcu-helper/os/windows/admin"
 )
@@ -14,7 +15,10 @@ func main() {
 	// 申请管理员权限
 	admin.WithAdminRun()
 	// start process listener
-	go listener.StartClientListen()
+	listener.StartClientListen()
 	// hold main thread
-	select {}
+	lcu.Init()
+	for {
+	}
+
 }
