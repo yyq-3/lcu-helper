@@ -24,3 +24,30 @@ type ClientStatus struct {
 	ClientSocket  gowebsocket.Socket
 	ClientConn    *websocket.Conn
 }
+
+type GameInfo struct {
+	MySummonerPUuid string
+	Team            string
+	TeamOne         []SummonerInfo
+	TeamTwo         []SummonerInfo
+	ChatGroupId     string
+}
+
+type SummonerInfo struct {
+}
+
+type HuntEvent struct {
+	Type           string `json:"type"`
+	Timestamp      int64  `json:"timestamp"`
+	KillerName     string `json:"killerName"`
+	MonsterSubType string `json:"monsterSubType"`
+	MonsterType    string `json:"monsterType"`
+}
+
+func (game *GameInfo) Clear() {
+	game.MySummonerPUuid = ""
+	game.Team = ""
+	game.TeamOne = nil
+	game.ChatGroupId = ""
+	game.TeamTwo = nil
+}
