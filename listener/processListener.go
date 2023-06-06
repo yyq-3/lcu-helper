@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"lcu-helper/lcu"
 	"lcu-helper/logger"
+	"lcu-helper/model"
 	"lcu-helper/os/windows/admin"
 	"regexp"
 	"strconv"
@@ -23,7 +24,7 @@ func StartClientListen() {
 	}
 }
 
-func handler(client *lcu.ClientStatus) bool {
+func handler(client *model.ClientStatus) bool {
 	if admin.ProcessIsRun(client.ProcessName) {
 		updateStatus()
 		logger.Infof("检测到客户端启动,进程PID：%d", lcu.ClientUx.Pid)
@@ -62,7 +63,6 @@ func getPortAndToken() bool {
 	lcu.ClientUx.Port = port
 	lcu.ClientUx.WebSocketAddr = fmt.Sprintf("wss://127.0.0.1:%d", port)
 	lcu.ClientUx.ApiAddr = fmt.Sprintf("https://riot:%s@127.0.0.1:%d", lcu.ClientUx.Token, port)
-	logger.Infof("lcuApi %s", lcu.ClientUx.ApiAddr)
 	return true
 }
 

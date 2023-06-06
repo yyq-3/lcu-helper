@@ -18,8 +18,12 @@ var httpClient = &http.Client{
 	},
 }
 
-func Get(baseUrl, url string) (data []byte, err error) {
+func get(baseUrl, url string) (data []byte, err error) {
 	return request("GET", baseUrl, url)
+}
+
+func post(baseUrl, url string) (data []byte, err error) {
+	return request("POST", baseUrl, url)
 }
 
 func request(method, baseUrl, url string) (data []byte, err error) {

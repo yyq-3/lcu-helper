@@ -2,8 +2,8 @@ package api
 
 // 召唤师相关
 const (
-	// SUMMONER_CURRENT 获取当前召唤师信息
-	SUMMONER_CURRENT = "/lol-summoner/v1/current-summoner"
+	// SummonerCurrent 获取当前召唤师信息
+	SummonerCurrent = "/lol-summoner/v1/current-summoner"
 	// SUMMONER_GAME_USER 获取本局游戏内所有玩家信息
 	SUMMONER_GAME_USER = "/lol-gameflow/v1/session"
 	// SUMMONER_INFO_BY_NAME 通过召唤师名称获取召唤师信息
@@ -50,4 +50,14 @@ const (
 	CONFIG_AUTO_RECONNECT = "/lol-gameflow/v1/reconnect"
 	// CONFIG_AUTO_NEXT_GAME 自动开始下一把
 	CONFIG_AUTO_NEXT_GAME = "/lol-lobby/v2/play-again"
+)
+
+// 英雄选择
+const (
+	CURRENT_CHAMP_SELECT = "/lol-champ-select/v1/current-champion"
+)
+
+// 聊天
+const (
+	CHAT_GROUP = "/lol-chat/v1/conversations"
 )

@@ -29,6 +29,7 @@ func main() {
 	pkg.Speak()
 	// start process listener
 	listener.StartClientListen()
+	//
 	// hold main thread
 	lcu.Init()
 	for {
