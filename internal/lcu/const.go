@@ -1,11 +1,10 @@
 package lcu
 
 const (
-	None = ""
 	// Home 游戏房间
 	Home = "Lobby"
-	// Hall 大厅
-	Hall = "None"
+	// None 大厅
+	None = "None"
 	// ChampSelect 英雄选择
 	ChampSelect = "ChampSelect"
 	// Matchmaking 排队中

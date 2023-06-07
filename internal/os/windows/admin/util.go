@@ -2,8 +2,8 @@ package admin
 
 import (
 	"golang.org/x/sys/windows"
-	"lcu-helper/lcu"
-	"lcu-helper/util"
+	"lcu-helper/internal/lcu"
+	"lcu-helper/internal/util"
 	"reflect"
 	"syscall"
 	"unsafe"

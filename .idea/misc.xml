@@ -3,16 +3,16 @@
   <component name="CodeInsightWorkspaceSettings">
     <option name="optimizeImportsOnTheFly" value="true" />
   </component>
-  <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="8" />
-  </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
         <option name="localRepository" value="C:\Users\F211849\.m2\repository" />
-        <option name="mavenHome" value="D:/apache-maven-3.8.5" />
+        <option name="mavenHome" value="$PROJECT_DIR$/../../apache-maven-3.8.5" />
         <option name="userSettingsFile" value="C:\Users\F211849\.m2\settings.xml" />
       </MavenGeneralSettings>
     </option>
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="jpab" />
   </component>
 </project>

@@ -30,6 +30,10 @@ const (
 const (
 	// GAME_CURRENT_CAMP 获取当前对局阵营红100 蓝200
 	GAME_CURRENT_CAMP = "/lol-champ-select/v1/pin-drop-notification"
+	// GAME_PLACE_FRIEND_JOIN_HOME 邀请加入房间
+	GAME_PLACE_FRIEND_JOIN_HOME = "/lol-lobby/v2/received-invitations"
+	// GAME_CREATE_HOME 创建游戏房间 无限乱斗mapId=19
+	GAME_CREATE_HOME = "/lol-lobby/v2/lobby"
 )
 
 // 设置相关

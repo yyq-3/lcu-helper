@@ -2,7 +2,7 @@ package admin
 
 import (
 	"golang.org/x/sys/windows"
-	"lcu-helper/logger"
+	"lcu-helper/pkg/logger"
 	"os"
 	"syscall"
 )

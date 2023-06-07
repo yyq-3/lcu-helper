@@ -1,4 +1,4 @@
-package model
+package models
 
 type UserInfo struct {
 	AccountId                   int64  `json:"accountId"`

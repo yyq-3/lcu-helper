@@ -2,16 +2,17 @@ package listener
 
 import (
 	"fmt"
-	"lcu-helper/lcu"
-	"lcu-helper/logger"
-	"lcu-helper/model"
-	"lcu-helper/os/windows/admin"
+	"lcu-helper/internal/lcu"
+	"lcu-helper/internal/models"
+	"lcu-helper/internal/os/windows/admin"
+	"lcu-helper/pkg/logger"
 	"regexp"
 	"strconv"
 	"time"
 )
 
 func StartClientListen() {
+	lcu.ClientUx.SummonerApi.Test()
 	for {
 		if !lcu.ClientUx.Status {
 			b := handler(lcu.ClientUx)
@@ -24,7 +25,7 @@ func StartClientListen() {
 	}
 }
 
-func handler(client *model.ClientStatus) bool {
+func handler(client *models.ClientStatus) bool {
 	if admin.ProcessIsRun(client.ProcessName) {
 		updateStatus()
 		logger.Infof("检测到客户端启动,进程PID：%d", lcu.ClientUx.Pid)
