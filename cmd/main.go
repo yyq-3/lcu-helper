@@ -3,6 +3,7 @@ package main
 import (
 	"lcu-helper/internal/lcu"
 	"lcu-helper/internal/listener"
+	"lcu-helper/internal/os/windows/admin"
 	"lcu-helper/pkg/logger"
 	"lcu-helper/pkg/tts"
 	"os"
@@ -23,7 +24,7 @@ func main() {
 		exit()
 	}()
 	// 申请管理员权限
-	//admin.WithAdminRun()
+	admin.WithAdminRun()
 	// 初始化语音助手
 	tts.Init()
 	tts.Speak("12354")

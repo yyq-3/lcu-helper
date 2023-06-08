@@ -1,6 +1,6 @@
 module lcu-helper
 
-go 1.17
+go 1.18
 
 require (
 	github.com/go-ole/go-ole v1.2.6

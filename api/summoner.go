@@ -24,9 +24,9 @@ func (s *Client) GetCurrentSummonerInfo() *models.UserInfo {
 
 // GetCurrentGameAllSummoner 获取本局游戏全部召唤师
 func (s *Client) GetCurrentGameAllSummoner() {
-	data, err := s.sendGetRequest(SummonerGameUser)
-	if err != nil {
-		return
-	}
+	//data, err := s.sendGetRequest(SummonerGameUser)
+	//if err != nil {
+	//	return
+	//}
 
 }

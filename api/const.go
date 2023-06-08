@@ -50,8 +50,8 @@ const (
 const (
 	// ConfigAutoAccept 自动接受对局
 	ConfigAutoAccept = "/lol-matchmaking/v1/ready-check/accept"
-	// CONFIG_AUTO_RECONNECT 自动重连
-	CONFIG_AUTO_RECONNECT = "/lol-gameflow/v1/reconnect"
+	// ConfigAutoReconnect 自动重连
+	ConfigAutoReconnect = "/lol-gameflow/v1/reconnect"
 	// ConfigAutoNextGame 自动开始下一把
 	ConfigAutoNextGame = "/lol-lobby/v2/play-again"
 )
@@ -63,5 +63,5 @@ const (
 
 // 聊天
 const (
-	CHAT_GROUP = "/lol-chat/v1/conversations"
+	ChatGroup = "/lol-chat/v1/conversations"
 )

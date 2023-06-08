@@ -13,4 +13,6 @@ const (
 	readyCheck = "ReadyCheck"
 	// InProgress 游戏中
 	inProgress = "InProgress"
+	// reconnect 重新连接
+	reconnect = "Reconnect"
 )

@@ -15,11 +15,12 @@ type Summoner interface {
 type Config interface {
 	AutoAccept() bool
 	AutoNextGame(body any) bool
+	AutoConnect() bool
 	ModifyRank() bool
 }
 
 type Chat interface {
-	GetChatGroup()
+	GetChatGroup() *[]models.Conversation
 }
 
 func Init(addr string) *Client {
@@ -33,4 +34,8 @@ func (s *Client) sendGetRequest(apiUrl string) ([]byte, error) {
 
 func (s *Client) sendPostRequest(apiUrl string, body any) ([]byte, error) {
 	return post(apiUrl, body)
+}
+
+func (s *Client) sendPutRequest(apiUrl string, body any) ([]byte, error) {
+	return put(apiUrl, body)
 }

@@ -26,6 +26,10 @@ func post(url string, body any) (data []byte, err error) {
 	return request("POST", url, body)
 }
 
+func put(url string, body any) (data []byte, err error) {
+	return request("PUT", url, body)
+}
+
 func request(method, url string, reqBody any) (data []byte, err error) {
 	var body io.Reader
 	if reqBody != nil {

@@ -95,6 +95,8 @@ func gameFlowPhase(data interface{}) {
 	} else if none == status {
 		// 游戏大厅页面，清除上次游戏记录信息
 		gameInfo.clear()
+	} else if reconnect == status {
+		apiClient.AutoConnect()
 	}
 }
 
@@ -123,9 +125,16 @@ func handlerMatchmaking() {
 
 // 处理英雄选择页面
 func handlerChampSelect() {
-	//groupList := api.GetChatGroup(ClientUx.ApiAddr)
-	//logger.Infof("%v", *groupList)
 	logger.Info("进入英雄选择页面")
+	for {
+		groupList := apiClient.GetChatGroup()
+		if groupList != nil {
+			logger.Infof("获取到聊天组ID：%s", groupList[0].Id)
+			break
+		}
+		time.Sleep(time.Second)
+	}
+	//logger.Infof("%v", *groupList)
 	// 获取聊天信息组
 	// 读取队友信息
 	// 计算得分 -》 入库 -》 保存
@@ -166,5 +175,7 @@ func onConnected(socket gowebsocket.Socket) {
 			break
 		}
 	}
+	// 修改rank
+	apiClient.ModifyRank()
 	socket.SendText("[5, \"OnJsonApiEvent\"]")
 }
