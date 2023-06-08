@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func StartProxy() {
+func startProxy() {
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	http.HandleFunc("/", serverProxy)
 	err := http.ListenAndServe(":8080", nil)

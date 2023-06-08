@@ -2,15 +2,15 @@ package lcu
 
 const (
 	// Home 游戏房间
-	Home = "Lobby"
+	home = "Lobby"
 	// None 大厅
-	None = "None"
+	none = "None"
 	// ChampSelect 英雄选择
-	ChampSelect = "ChampSelect"
+	champSelect = "ChampSelect"
 	// Matchmaking 排队中
-	Matchmaking = "Matchmaking"
+	matchmaking = "Matchmaking"
 	// ReadyCheck 接受/拒绝
-	ReadyCheck = "ReadyCheck"
+	readyCheck = "ReadyCheck"
 	// InProgress 游戏中
-	InProgress = "InProgress"
+	inProgress = "InProgress"
 )

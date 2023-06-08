@@ -18,24 +18,24 @@ var httpClient = &http.Client{
 	},
 }
 
-func get(baseUrl, url string) (data []byte, err error) {
-	return request("GET", baseUrl, url)
+func get(url string) (data []byte, err error) {
+	return request("GET", url, nil)
 }
 
-func post(baseUrl, url string) (data []byte, err error) {
-	return request("POST", baseUrl, url)
+func post(url string, body any) (data []byte, err error) {
+	return request("POST", url, body)
 }
 
-func request(method, baseUrl, url string) (data []byte, err error) {
+func request(method, url string, reqBody any) (data []byte, err error) {
 	var body io.Reader
-	if data != nil {
-		bts, err := json.Marshal(data)
+	if reqBody != nil {
+		bts, err := json.Marshal(reqBody)
 		if err != nil {
 			return nil, err
 		}
 		body = bytes.NewReader(bts)
 	}
-	req, _ := http.NewRequest(method, baseUrl+url, body)
+	req, _ := http.NewRequest(method, apiAddr+url, body)
 	if req.Body != nil {
 		req.Header.Add("ContentType", "application/json")
 	}

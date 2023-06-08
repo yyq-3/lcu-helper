@@ -6,13 +6,10 @@ import (
 	"lcu-helper/pkg/logger"
 )
 
-type Summoner struct {
-}
-
 // GetCurrentSummonerInfo 获取当前召唤师信息
-func (s *Summoner) GetCurrentSummonerInfo(apiAddr string) *models.UserInfo {
+func (s *Client) GetCurrentSummonerInfo() *models.UserInfo {
 	var user models.UserInfo
-	data, err := get(apiAddr, SummonerCurrent)
+	data, err := s.sendGetRequest(SummonerCurrent)
 	if err != nil {
 		logger.Infof("获取召唤师信息失败, %s", err.Error())
 		return nil
@@ -25,6 +22,11 @@ func (s *Summoner) GetCurrentSummonerInfo(apiAddr string) *models.UserInfo {
 	return &user
 }
 
-func (s *Summoner) Test() {
-	logger.Info("test111111111111111111111")
+// GetCurrentGameAllSummoner 获取本局游戏全部召唤师
+func (s *Client) GetCurrentGameAllSummoner() {
+	data, err := s.sendGetRequest(SummonerGameUser)
+	if err != nil {
+		return
+	}
+
 }

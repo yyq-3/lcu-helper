@@ -12,7 +12,7 @@ type WsResponseResult struct {
 	Uri       string      `json:"uri"`
 }
 
-type ClientStatus struct {
+type ClientProcessInfo struct {
 	ProcessName   string
 	Lock          sync.RWMutex
 	Status        bool
@@ -44,8 +44,7 @@ type HuntEvent struct {
 	MonsterType    string `json:"monsterType"`
 }
 
-func (game *GameInfo) Clear() {
-	game.MySummonerPUuid = ""
+func (game *GameInfo) clear() {
 	game.Team = ""
 	game.TeamOne = nil
 	game.ChatGroupId = ""

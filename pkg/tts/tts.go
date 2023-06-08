@@ -43,10 +43,7 @@ func Speak(body string) {
 // Exit 程序退出关闭流
 func Exit() {
 	//关闭文件
-	_, err := oleutil.CallMethod(ff, "Close")
-	if err != nil {
-		logger.Infof("语音助手退出失败，失败原因：%s", err.Error())
-	}
+	//_, err := oleutil.CallMethod(ff, "Close")
 	ff.Release()
 	voice.Release()
 	ole.CoUninitialize()

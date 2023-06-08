@@ -6,6 +6,7 @@ import (
 	"github.com/mattn/go-colorable"
 	"github.com/sirupsen/logrus"
 	"math/rand"
+	"os"
 	"time"
 )
 
@@ -16,6 +17,11 @@ func initialize() {
 	logrus.SetLevel(logrus.TraceLevel)
 	logrus.SetFormatter(myLog)
 	logrus.SetOutput(colorable.NewColorableStdout())
+	file, err := os.OpenFile("./lcu-helper/access.log", 1, os.ModeAppend)
+	if err != nil {
+		return
+	}
+	logrus.SetOutput(colorable.NewColorable(file))
 }
 
 type MyLog struct {

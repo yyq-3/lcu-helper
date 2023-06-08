@@ -1,10 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"lcu-helper/internal/lcu"
 	"lcu-helper/internal/listener"
-	"lcu-helper/internal/os/windows/admin"
+	"lcu-helper/pkg/logger"
 	"lcu-helper/pkg/tts"
 	"os"
 	"os/signal"
@@ -21,20 +20,28 @@ func main() {
 	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-signals
-		fmt.Println("程序即将关闭")
-		tts.Exit()
-		os.Exit(0)
+		exit()
 	}()
 	// 申请管理员权限
-	admin.WithAdminRun()
+	//admin.WithAdminRun()
+	// 初始化语音助手
 	tts.Init()
 	tts.Speak("12354")
 	// start process listener
 	listener.StartClientListen()
-	//
-	// hold main thread
+	// 初始化lcu
 	lcu.Init()
+	// hold main thread
 	for {
 	}
 
+}
+
+func exit() {
+	logger.Info("游戏助手关闭，感谢您的使用~")
+	if lcu.Socket.IsConnected {
+		lcu.Socket.Close()
+	}
+	tts.Exit()
+	os.Exit(0)
 }

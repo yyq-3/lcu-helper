@@ -5,58 +5,52 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sacOO7/gowebsocket"
+	"lcu-helper/api"
 	"lcu-helper/internal/global"
 	"lcu-helper/internal/models"
 	"lcu-helper/internal/util"
 	"lcu-helper/pkg/logger"
 	"net/http"
-	"os"
-	"os/signal"
 	"time"
 )
 
-var ClientUx = &models.ClientStatus{
-	ProcessName: "LeagueClientUx.exe",
-	Port:        0,
-	Token:       "",
-}
+var (
+	ClientUx = &ClientProcessInfo{
+		ProcessName: "LeagueClientUx.exe",
+		Port:        0,
+		Token:       "",
+	}
+	gameInfo        = &GameInfo{}
+	currentSummoner = &models.UserInfo{}
+)
 
-var socket gowebsocket.Socket
-var lastResponse models.WsResponseResult
-var currentSummoner = &models.UserInfo{}
+var (
+	apiClient    *api.Client
+	Socket       gowebsocket.Socket
+	lastResponse models.WsResponseResult
+)
 
 func Init() {
 	go initGameFlow()
 }
 
 func initGameFlow() {
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt)
-
-	socket = gowebsocket.New(ClientUx.WebSocketAddr)
+	Socket = gowebsocket.New(ClientUx.WebSocketAddr)
 	header := http.Header{}
 	header.Add("Authorization", "Basic "+base64.StdEncoding.EncodeToString(util.Str2byte(fmt.Sprintf("riot:%s", ClientUx.Token))))
 	options := gowebsocket.ConnectionOptions{
 		UseSSL: true,
 	}
-	socket.RequestHeader = header
-	socket.ConnectionOptions = options
-	socket.OnTextMessage = onTextMessage
-	socket.OnConnected = onConnected
-	socket.OnDisconnected = onDisconnected
-	socket.OnConnectError = onConnectError
-	socket.OnPingReceived = onPingReceived
-	socket.OnPongReceived = onPongReceived
-	socket.Timeout = time.Hour * 12
-	socket.Connect()
-	for {
-		select {
-		case <-interrupt:
-			logger.Info("游戏助手关闭，感谢您的使用~")
-			socket.Close()
-			return
-		}
-	}
+	Socket.RequestHeader = header
+	Socket.ConnectionOptions = options
+	Socket.OnTextMessage = onTextMessage
+	Socket.OnConnected = onConnected
+	Socket.OnDisconnected = onDisconnected
+	Socket.OnConnectError = onConnectError
+	Socket.OnPingReceived = onPingReceived
+	Socket.OnPongReceived = onPongReceived
+	Socket.Timeout = time.Hour * 12
+	Socket.Connect()
 }
 
 func onTextMessage(message string, _ gowebsocket.Socket) {
@@ -84,18 +78,23 @@ func gameFlowPhase(data interface{}) {
 		return
 	}
 	logger.Infof("游戏状态切换，当前状态：%s", status)
-	if ChampSelect == status {
+	if champSelect == status {
 		// 英雄选择页面
 		handlerChampSelect()
-	} else if Matchmaking == status {
+	} else if matchmaking == status {
 		// 排队页面
 		handlerMatchmaking()
-	} else if Home == status {
+	} else if home == status {
 		handlerHome()
-	} else if ReadyCheck == status {
+	} else if readyCheck == status {
+		// 接受or拒绝页面
 		handlerReadyCheck()
-	} else if InProgress == status {
+	} else if inProgress == status {
+		// 英雄选择完毕载入游戏进程
 		handlerInProgress()
+	} else if none == status {
+		// 游戏大厅页面，清除上次游戏记录信息
+		gameInfo.clear()
 	}
 }
 
@@ -103,10 +102,11 @@ func handlerInProgress() {
 
 }
 
-// 自动接受对局
+// 匹配到准备/拒绝页面
+// 可在该页面配置自动接受对局
 func handlerReadyCheck() {
+	apiClient.AutoAccept()
 	logger.Info("自动接受对局")
-	ClientUx.ConfigApi.AutoAccept()
 }
 
 func handlerHome() {
@@ -126,6 +126,14 @@ func handlerChampSelect() {
 	//groupList := api.GetChatGroup(ClientUx.ApiAddr)
 	//logger.Infof("%v", *groupList)
 	logger.Info("进入英雄选择页面")
+	// 获取聊天信息组
+	// 读取队友信息
+	// 计算得分 -》 入库 -》 保存
+	// 推送公屏
+	// 秒选英雄
+
+	// 自动天赋
+
 }
 
 func onPongReceived(data string, _ gowebsocket.Socket) {
@@ -147,12 +155,14 @@ func onDisconnected(error, gowebsocket.Socket) {
 
 func onConnected(socket gowebsocket.Socket) {
 	logger.Info("连接到客户端成功!")
-	go StartProxy()
+	go startProxy()
+	apiClient = api.Init(ClientUx.ApiAddr)
 	for {
 		// 连接成功后获取当前用户信息并保存到全局变量里
-		currentSummoner = ClientUx.SummonerApi.GetCurrentSummonerInfo()
+		currentSummoner = apiClient.GetCurrentSummonerInfo()
 		if currentSummoner.SummonerId != 0 {
 			logger.Infof("%v", currentSummoner)
+			gameInfo.MySummonerPUuid = currentSummoner.Puuid
 			break
 		}
 	}
