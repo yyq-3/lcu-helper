@@ -126,40 +126,26 @@ func handlerMatchmaking() {
 // 处理英雄选择页面
 func handlerChampSelect() {
 	logger.Info("进入英雄选择页面")
+	// 获取聊天信息组
 	for {
 		groupList := apiClient.GetChatGroup()
-		if groupList != nil {
+		if groupList != nil && len(groupList) > 0 {
 			logger.Infof("获取到聊天组ID：%s", groupList[0].Id)
+			// save id to global
+			gameInfo.ChatGroupId = groupList[0].Id
 			break
 		}
-		time.Sleep(time.Second)
+		// every 500ms call
+		time.Sleep(time.Millisecond * 500)
 	}
-	//logger.Infof("%v", *groupList)
-	// 获取聊天信息组
 	// 读取队友信息
+
 	// 计算得分 -》 入库 -》 保存
 	// 推送公屏
 	// 秒选英雄
 
 	// 自动天赋
 
-}
-
-func onPongReceived(data string, _ gowebsocket.Socket) {
-	logger.Infof("收到Pong请求, %s", data)
-}
-
-func onPingReceived(data string, _ gowebsocket.Socket) {
-	logger.Infof("收到Ping请求, %s", data)
-}
-
-func onConnectError(err error, socket gowebsocket.Socket) {
-	logger.Infof("连接失败, 失败原因: %s, 开始重新连接", err.Error())
-	socket.Connect()
-}
-
-func onDisconnected(error, gowebsocket.Socket) {
-	logger.Info("连接关闭!!!")
 }
 
 func onConnected(socket gowebsocket.Socket) {
@@ -178,4 +164,21 @@ func onConnected(socket gowebsocket.Socket) {
 	// 修改rank
 	apiClient.ModifyRank()
 	socket.SendText("[5, \"OnJsonApiEvent\"]")
+}
+
+func onPongReceived(data string, _ gowebsocket.Socket) {
+	logger.Infof("收到Pong请求, %s", data)
+}
+
+func onPingReceived(data string, _ gowebsocket.Socket) {
+	logger.Infof("收到Ping请求, %s", data)
+}
+
+func onConnectError(err error, socket gowebsocket.Socket) {
+	logger.Infof("连接失败, 失败原因: %s, 开始重新连接", err.Error())
+	socket.Connect()
+}
+
+func onDisconnected(error, gowebsocket.Socket) {
+	logger.Info("连接关闭!!!")
 }
