@@ -101,7 +101,12 @@ func gameFlowPhase(data interface{}) {
 }
 
 func handlerInProgress() {
-
+	// if len(res) not eq 10, every 500ms call
+	for {
+		apiClient.GetCurrentGameAllSummoner()
+		time.Sleep(time.Millisecond * 500)
+		break
+	}
 }
 
 // 匹配到准备/拒绝页面
