@@ -15,7 +15,12 @@ require (
 )
 
 require (
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/sacOO7/go-logger v0.0.0-20180719173527-9ac9add5a50d // indirect
 	github.com/stretchr/testify v1.8.2 // indirect
+	gorm.io/driver/sqlite v1.5.2 // indirect
+	gorm.io/gorm v1.25.2-0.20230530020048-26663ab9bf55 // indirect
 )

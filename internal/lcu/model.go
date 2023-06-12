@@ -7,12 +7,6 @@ import (
 	"sync"
 )
 
-type WsResponseResult struct {
-	Data      interface{} `json:"data"`
-	EventType string      `json:"eventType"`
-	Uri       string      `json:"uri"`
-}
-
 type ClientProcessInfo struct {
 	ProcessName   string
 	Lock          sync.RWMutex

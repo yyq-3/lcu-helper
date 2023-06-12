@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"lcu-helper/internal/models"
 	"lcu-helper/pkg/logger"
 )
@@ -24,10 +25,16 @@ func (s *Client) GetCurrentSummonerInfo() *models.UserInfo {
 
 // GetCurrentGameAllSummoner 获取本局游戏全部召唤师
 func (s *Client) GetCurrentGameAllSummoner() {
-	//data, err := s.sendGetRequest(SummonerGameUser)
-	//if err != nil {
-	//	return
-	//}
+	var res []map[string]interface{}
+	data, err := s.sendGetRequest(SummonerGameUser)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return
+	}
+	logger.Infof("%v", res)
 
 }
 
@@ -41,4 +48,18 @@ func (s *Client) SummonerGradeQuery(page, size int, puuid string) *models.UserIn
 	//	return
 	//}
 	return nil
+}
+
+// GetSummonerGradeByPUuid 通过PUuid查询玩家近十场战绩
+func (s *Client) GetSummonerGradeByPUuid(pUuid string) {
+	var res []map[string]interface{}
+	data, err := s.sendGetRequest(fmt.Sprintf(SUMMONER_RECORD_BY_PUUID, pUuid, 0, 10))
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return
+	}
+	logger.Infof("玩家%s的最近十场战绩为\n%v", res)
 }
