@@ -53,7 +53,7 @@ func (s *Client) SummonerGradeQuery(page, size int, puuid string) *models.UserIn
 // GetSummonerGradeByPUuid 通过PUuid查询玩家近十场战绩
 func (s *Client) GetSummonerGradeByPUuid(pUuid string) {
 	var res []map[string]interface{}
-	data, err := s.sendGetRequest(fmt.Sprintf(SUMMONER_RECORD_BY_PUUID, pUuid, 0, 10))
+	data, err := s.sendGetRequest(fmt.Sprintf(SummonerRecordByPuuid, pUuid, 0, 10))
 	if err != nil {
 		return
 	}
