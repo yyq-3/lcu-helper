@@ -5,35 +5,39 @@ import (
 	"fmt"
 	"github.com/mattn/go-colorable"
 	"github.com/sirupsen/logrus"
+	"io"
 	"math/rand"
 	"os"
-	"time"
+	"path/filepath"
 )
 
 var myLog = new(MyLog)
-var base = 0.123456
 
-func initialize() {
+func Initialize() {
 	logrus.SetLevel(logrus.TraceLevel)
 	logrus.SetFormatter(myLog)
-	logrus.SetOutput(colorable.NewColorableStdout())
-	file, err := os.OpenFile("./lcu-helper/access.log", 1, os.ModeAppend)
+	runPath, _ := os.Executable()
+	runDir := filepath.Dir(runPath)
+	name, _ := filepath.Abs(runDir + "/lcu-helper/access.log")
+	err := os.MkdirAll(runDir+"/lcu-helper/", 0744)
 	if err != nil {
+		Infof("创建日志文件失败,失败原因:%s", err.Error())
+		logrus.SetOutput(colorable.NewColorableStdout())
 		return
 	}
-	logrus.SetOutput(colorable.NewColorable(file))
+	file, err := os.OpenFile(name, os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		Infof("打开日志文件失败,失败原因:%s", err.Error())
+		logrus.SetOutput(colorable.NewColorableStdout())
+		return
+	}
+	logrus.SetOutput(io.MultiWriter(colorable.NewColorableStdout(), colorable.NewColorable(file)))
 }
 
 type MyLog struct {
-	Color int
 }
 
 func (mLog *MyLog) Format(entry *logrus.Entry) ([]byte, error) {
-	// 随机展示颜色
-	f := base * float64(time.Now().Nanosecond())
-	rand.Seed(int64(f))
-	myLog.Color = rand.Intn(7) + 31
-	var color = mLog.Color
 	var b *bytes.Buffer
 	if entry.Buffer != nil {
 		b = entry.Buffer
@@ -42,16 +46,21 @@ func (mLog *MyLog) Format(entry *logrus.Entry) ([]byte, error) {
 	}
 
 	timestamp := entry.Time.Format("2006/01/02 15:04:05.000")
-	_, err := fmt.Fprintf(b, "\x1b[%dm%s %s\x1b[0m\n", color, timestamp, entry.Message)
+	msg := fmt.Sprintf("%s %s", timestamp, entry.Message)
+	_, err := fmt.Fprintf(b, colorOut(msg))
 	return b.Bytes(), err
 }
 
+func colorOut(msg string) string {
+	// 随机展示颜色
+	color := rand.Intn(7) + 31
+	return fmt.Sprintf("\u001B[%dm%s\u001B[0m\n", color, msg)
+}
+
 func Info(args ...interface{}) {
-	initialize()
 	logrus.Infoln(args)
 }
 
 func Infof(str string, args ...interface{}) {
-	initialize()
 	logrus.Infof(str, args...)
 }

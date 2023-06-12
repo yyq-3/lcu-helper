@@ -30,3 +30,15 @@ func (s *Client) GetCurrentGameAllSummoner() {
 	//}
 
 }
+
+func (s *Client) SummonerGradeQuery(page, size int, puuid string) *models.UserInfo {
+	//data, err := s.sendPostRequest(fmt.Sprintf(SummonerRecordByPuuid, puuid, page, size), nil)
+	//if err != nil {
+	//	return
+	//}
+	//err = json.Unmarshal(data)
+	//if err != nil {
+	//	return
+	//}
+	return nil
+}

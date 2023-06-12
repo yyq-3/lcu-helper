@@ -12,14 +12,16 @@ const (
 	SUMMONER_INFO_BY_ID = "/lol-summoner/v1/summoners/%s"
 	// SUMMONER_INFO_BY_PUUID 通过Puuid获取召唤师信息
 	SUMMONER_INFO_BY_PUUID = "/lol-summoner/v2/summoners/puuid/%s"
-	// SUMMONER_RECORD_BY_PUUID 通过puuid查询召唤师战绩
-	SUMMONER_RECORD_BY_PUUID = "/lol-match-history/v1/products/lol/%s/matches?begIndex=%d&endIndex=%d"
+	// SummonerRecordByPuuid 通过puuid查询召唤师战绩
+	SummonerRecordByPuuid = "/lol-match-history/v1/products/lol/%s/matches?begIndex=%d&endIndex=%d"
 )
 
 // 聊天相关
 const (
-	// CHAT_SEND_MESSAGE_TO_CHAT_GROUP 发送消息到聊天组
-	CHAT_SEND_MESSAGE_TO_CHAT_GROUP = "/lol-chat/v1/conversations/%s/messages"
+	// ChatSendMessageToChatGroup 发送消息到聊天组
+	ChatSendMessageToChatGroup = "/lol-chat/v1/conversations/%s/messages"
+	// ChatGroup 获取选择英雄页面的聊天组
+	ChatGroup = "/lol-chat/v1/conversations"
 	// CHAT_GET_CHAT_GROUP 获取聊天组
 	CHAT_GET_CHAT_GROUP = "/lol-champ-select/v1/session"
 	// CHAT_SEND_MESSAGE_TO_USERNAME 给指定好友发送消息
@@ -62,6 +64,4 @@ const (
 )
 
 // 聊天
-const (
-	ChatGroup = "/lol-chat/v1/conversations"
-)
+const ()

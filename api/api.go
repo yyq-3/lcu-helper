@@ -14,13 +14,14 @@ type Summoner interface {
 
 type Config interface {
 	AutoAccept() bool
-	AutoNextGame(body any) bool
+	AutoNextGame() bool
 	AutoConnect() bool
 	ModifyRank() bool
 }
 
 type Chat interface {
-	GetChatGroup() *[]models.Conversation
+	GetChatGroup() []models.Conversation
+	SendMessage2Group(msg string)
 }
 
 func Init(addr string) *Client {

@@ -3,6 +3,7 @@ package lcu
 import (
 	"github.com/gorilla/websocket"
 	"github.com/sacOO7/gowebsocket"
+	"lcu-helper/pkg/logger"
 	"sync"
 )
 
@@ -49,4 +50,5 @@ func (game *GameInfo) clear() {
 	game.TeamOne = nil
 	game.ChatGroupId = ""
 	game.TeamTwo = nil
+	logger.Info("上次对局信息清理完毕")
 }

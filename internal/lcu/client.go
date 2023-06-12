@@ -126,19 +126,23 @@ func handlerMatchmaking() {
 // 处理英雄选择页面
 func handlerChampSelect() {
 	logger.Info("进入英雄选择页面")
+	// 获取聊天信息组
 	for {
 		groupList := apiClient.GetChatGroup()
-		if groupList != nil {
+		if groupList != nil && len(groupList) > 0 {
 			logger.Infof("获取到聊天组ID：%s", groupList[0].Id)
+			gameInfo.ChatGroupId = groupList[0].Id
 			break
 		}
 		time.Sleep(time.Second)
 	}
-	//logger.Infof("%v", *groupList)
-	// 获取聊天信息组
+	time.Sleep(time.Second * 3)
 	// 读取队友信息
+
 	// 计算得分 -》 入库 -》 保存
+
 	// 推送公屏
+	apiClient.SendMessage2Group(gameInfo.ChatGroupId, "send message -- current msg from opgg")
 	// 秒选英雄
 
 	// 自动天赋

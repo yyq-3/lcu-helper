@@ -21,6 +21,7 @@ func WithAdminRun() {
 	if !IsAdmin() {
 		AllowAdmin()
 	} else {
+		logger.Initialize()
 		logger.Info("已获取管理员身份")
 	}
 }

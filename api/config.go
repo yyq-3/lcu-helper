@@ -11,9 +11,9 @@ func (s *Client) AutoAccept() bool {
 	return err == nil
 }
 
-func (s *Client) AutoNextGame(body any) bool {
+func (s *Client) AutoNextGame() bool {
 	logger.Info("自动下一局游戏")
-	_, err := s.sendPostRequest(ConfigAutoNextGame, body)
+	_, err := s.sendPostRequest(ConfigAutoNextGame, nil)
 	return err == nil
 }
 
