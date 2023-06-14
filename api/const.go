@@ -65,3 +65,8 @@ const (
 
 // 聊天
 const ()
+
+// tft
+const (
+	TftExternal = "/tft-external/v1/active-game"
+)
