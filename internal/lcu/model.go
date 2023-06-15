@@ -26,6 +26,7 @@ type GameInfo struct {
 	TeamOne         []SummonerInfo
 	TeamTwo         []SummonerInfo
 	ChatGroupId     string
+	ReConnect       bool
 }
 
 type SummonerInfo struct {

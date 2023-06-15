@@ -101,11 +101,60 @@ func gameFlowPhase(data interface{}) {
 }
 
 func handlerInProgress() {
+	var summonerInProcess *models.SummonerInProcess
 	// if len(res) not eq 10, every 500ms call
 	for {
-		apiClient.GetCurrentGameAllSummoner()
+		summonerInProcess = apiClient.GetCurrentGameAllSummoner()
+		if summonerInProcess != nil {
+			logger.Info("获取到本局所有玩家信息")
+			break
+		}
+		logger.Info("即将进行下一次查询")
 		time.Sleep(time.Millisecond * 500)
-		break
+	}
+	gameMode := summonerInProcess.Map.GameMode
+	switch gameMode {
+	case "TFT":
+		handlerTft(summonerInProcess)
+	default:
+		handlerLol(summonerInProcess)
+	}
+
+}
+
+func handlerLol(process *models.SummonerInProcess) {
+
+}
+
+func handlerTft(s *models.SummonerInProcess) {
+	for _, teams := range s.GameData.TeamOne {
+		if teams.Puuid == gameInfo.MySummonerPUuid {
+			continue
+		}
+		// 利用携程查询每个人的对局信息
+		go func(puuid, name string) {
+			for {
+				tftGrade := apiClient.GetSummonerGradeByPUuidForTft(puuid)
+				if tftGrade != nil {
+					// 循环每局棋子,只处理最近五场的
+					for i, game := range tftGrade.Games {
+						if i >= 5 {
+							break
+						}
+						for _, p := range game.Json.Participants {
+							if p.Puuid == puuid {
+								speakBody := fmt.Sprintf("查询到召唤师%s最近阵容", name)
+								logger.Info(speakBody)
+								//tts.Speak(speakBody)
+								break
+							}
+						}
+					}
+					break
+				}
+				time.Sleep(time.Second)
+			}
+		}(teams.Puuid, teams.SummonerName)
 	}
 }
 

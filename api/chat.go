@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"lcu-helper/internal/models"
+	"lcu-helper/internal/util"
 	"lcu-helper/pkg/logger"
 )
 
@@ -21,14 +22,10 @@ func (s *Client) GetChatGroup() []models.Conversation {
 }
 
 func (s *Client) SendMessage2Group(chatGroupId, msg string) {
-	req := map[string]string{}
-	req["body"] = msg
-	body, err := json.Marshal(req)
-	if err != nil {
-		logger.Infof("发送消息失败：失败原因：%s", err.Error())
-		return
-	}
-	_, err = s.sendPostRequest(fmt.Sprintf(ChatSendMessageToChatGroup, chatGroupId), body)
+	reqBody := map[string]string{}
+	reqBody["body"] = msg
+	data, err := s.sendPostRequest(fmt.Sprintf(ChatSendMessageToChatGroup, chatGroupId), reqBody)
+	logger.Info(util.Byte2str(data))
 	if err != nil {
 		logger.Infof("发送消息失败：失败原因：%s", err.Error())
 		return

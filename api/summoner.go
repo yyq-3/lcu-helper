@@ -7,6 +7,11 @@ import (
 	"lcu-helper/pkg/logger"
 )
 
+const (
+	LOL = "lol"
+	TFT = "tft"
+)
+
 // GetCurrentSummonerInfo 获取当前召唤师信息
 func (s *Client) GetCurrentSummonerInfo() *models.UserInfo {
 	var user models.UserInfo
@@ -24,18 +29,17 @@ func (s *Client) GetCurrentSummonerInfo() *models.UserInfo {
 }
 
 // GetCurrentGameAllSummoner 获取本局游戏全部召唤师
-func (s *Client) GetCurrentGameAllSummoner() {
-	var res []map[string]interface{}
+func (s *Client) GetCurrentGameAllSummoner() *models.SummonerInProcess {
+	var res models.SummonerInProcess
 	data, err := s.sendGetRequest(SummonerGameUser)
 	if err != nil {
-		return
+		return nil
 	}
 	err = json.Unmarshal(data, &res)
 	if err != nil {
-		return
+		return nil
 	}
-	logger.Infof("%v", res)
-
+	return &res
 }
 
 func (s *Client) SummonerGradeQuery(page, size int, puuid string) *models.UserInfo {
@@ -50,16 +54,31 @@ func (s *Client) SummonerGradeQuery(page, size int, puuid string) *models.UserIn
 	return nil
 }
 
-// GetSummonerGradeByPUuid 通过PUuid查询玩家近十场战绩
-func (s *Client) GetSummonerGradeByPUuid(pUuid string) {
-	var res []map[string]interface{}
-	data, err := s.sendGetRequest(fmt.Sprintf(SummonerRecordByPuuid, pUuid, 0, 10))
+// GetSummonerGradeByPUuidForLol 通过PUuid查询玩家近十场LOL战绩
+func (s *Client) GetSummonerGradeByPUuidForLol(pUuid string) *models.MatchHistoryLol {
+	var res models.MatchHistoryLol
+	data, err := s.sendGetRequest(fmt.Sprintf(SummonerRecordByPuuid, LOL, pUuid))
 	if err != nil {
-		return
+		return nil
 	}
 	err = json.Unmarshal(data, &res)
 	if err != nil {
-		return
+		return nil
 	}
-	logger.Infof("玩家%s的最近十场战绩为\n%v", res)
+	return &res
+}
+
+// GetSummonerGradeByPUuidForTft 通过PUuid查询玩家近十场战绩
+// pUUid 召唤师puuid
+func (s *Client) GetSummonerGradeByPUuidForTft(pUuid string) *models.MatchHistoryTft {
+	var tftRes models.MatchHistoryTft
+	data, err := s.sendGetRequest(fmt.Sprintf(SummonerRecordByPuuid, TFT, pUuid))
+	if err != nil {
+		return nil
+	}
+	err = json.Unmarshal(data, &tftRes)
+	if err != nil {
+		return nil
+	}
+	return &tftRes
 }

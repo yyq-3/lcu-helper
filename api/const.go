@@ -13,7 +13,7 @@ const (
 	// SUMMONER_INFO_BY_PUUID 通过Puuid获取召唤师信息
 	SUMMONER_INFO_BY_PUUID = "/lol-summoner/v2/summoners/puuid/%s"
 	// SummonerRecordByPuuid 通过puuid查询召唤师战绩
-	SummonerRecordByPuuid = "/lol-match-history/v1/products/lol/%s/matches?begIndex=%d&endIndex=%d"
+	SummonerRecordByPuuid = "/lol-match-history/v1/products/%s/%s/matches"
 )
 
 // 聊天相关
@@ -64,9 +64,6 @@ const (
 const (
 	CURRENT_CHAMP_SELECT = "/lol-champ-select/v1/current-champion"
 )
-
-// 聊天
-const ()
 
 // tft
 const (
