@@ -36,6 +36,8 @@ const (
 	GAME_PLACE_FRIEND_JOIN_HOME = "/lol-lobby/v2/received-invitations"
 	// GAME_CREATE_HOME 创建游戏房间 无限乱斗mapId=19
 	GAME_CREATE_HOME = "/lol-lobby/v2/lobby"
+	// GameLiveClientData get请求 获取实时数据
+	GameLiveClientData = "/liveclientdata/activeplayer"
 )
 
 // 设置相关

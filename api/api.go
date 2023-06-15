@@ -19,6 +19,10 @@ type Config interface {
 	ModifyRank() bool
 }
 
+type Game interface {
+	GetLiveClientData() *map[string]interface{}
+}
+
 type Chat interface {
 	GetChatGroup() []models.Conversation
 	SendMessage2Group(msg string)
