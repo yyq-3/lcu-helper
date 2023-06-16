@@ -20,8 +20,12 @@ const (
 const (
 	// ChatSendMessageToChatGroup 发送消息到聊天组
 	ChatSendMessageToChatGroup = "/lol-chat/v1/conversations/%s/messages"
+	// ChatSendMessageToGameProcess 发送消息到游戏进程中
+	ChatSendMessageToGameProcess = "/lol-chat/v1/conversations/active"
 	// ChatGroup 获取选择英雄页面的聊天组
 	ChatGroup = "/lol-chat/v1/conversations"
+	// ChatGetAllByRoomId 获取选择英雄页面队友信息
+	ChatGetAllByRoomId = "/lol-chat/v1/conversations/%s/messages"
 	// CHAT_GET_CHAT_GROUP 获取聊天组
 	CHAT_GET_CHAT_GROUP = "/lol-champ-select/v1/session"
 	// CHAT_SEND_MESSAGE_TO_USERNAME 给指定好友发送消息

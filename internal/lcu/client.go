@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/sacOO7/gowebsocket"
+	"github.com/thoas/go-funk"
 	"lcu-helper/api"
 	"lcu-helper/internal/global"
 	"lcu-helper/internal/models"
@@ -122,8 +123,39 @@ func handlerInProgress() {
 
 }
 
-func handlerLol(process *models.SummonerInProcess) {
+// 处理非云顶游戏
+func handlerLol(s *models.SummonerInProcess) {
+	allPuuid := make([]string, 5)
+	msgTemplate := `敌方玩家【%s】最近战绩
+使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】
+使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】
+使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】
+使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】
+使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】`
+	if funk.ContainsString(gameInfo.TeamOne, s.GameData.TeamOne[0].Puuid) {
+		for _, team := range s.GameData.TeamTwo {
+			allPuuid = append(allPuuid, team.Puuid)
+		}
+	} else {
+		for _, team := range s.GameData.TeamOne {
+			allPuuid = append(allPuuid, team.Puuid)
+		}
+	}
 
+	for _, puuid := range allPuuid {
+		go func(puuid string) {
+			var lol *models.MatchHistoryLol
+			for {
+				lol = apiClient.GetSummonerGradeByPUuidForLol(puuid)
+				if lol != nil {
+					break
+				}
+				time.Sleep(time.Second)
+			}
+			// 发送到游戏
+			apiClient.SendMessage2Game(msgTemplate)
+		}(puuid)
+	}
 }
 
 func handlerTft(s *models.SummonerInProcess) {
@@ -161,8 +193,9 @@ func handlerTft(s *models.SummonerInProcess) {
 // 匹配到准备/拒绝页面
 // 可在该页面配置自动接受对局
 func handlerReadyCheck() {
-	apiClient.AutoAccept()
-	logger.Info("自动接受对局")
+	if apiClient.AutoAccept() {
+		logger.Info("自动接受对局")
+	}
 }
 
 func handlerHome() {
@@ -172,8 +205,6 @@ func handlerHome() {
 
 // 处理排队页面
 func handlerMatchmaking() {
-	// 获取当前排队房间信息
-
 	logger.Info("开始排队")
 }
 

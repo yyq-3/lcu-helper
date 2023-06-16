@@ -23,13 +23,10 @@ type ClientProcessInfo struct {
 type GameInfo struct {
 	MySummonerPUuid string
 	Team            string
-	TeamOne         []SummonerInfo
-	TeamTwo         []SummonerInfo
+	TeamOne         []string
+	TeamTwo         []string
 	ChatGroupId     string
 	ReConnect       bool
-}
-
-type SummonerInfo struct {
 }
 
 type HuntEvent struct {

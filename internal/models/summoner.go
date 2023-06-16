@@ -347,67 +347,9 @@ type SummonerInProcess struct {
 			SpectatorEnabled            bool   `json:"spectatorEnabled"`
 			Type                        string `json:"type"`
 		} `json:"queue"`
-		SpectatorsAllowed bool `json:"spectatorsAllowed"`
-		TeamOne           []struct {
-			AccountId         float64 `json:"accountId,omitempty"`
-			AdjustmentFlags   float64 `json:"adjustmentFlags,omitempty"`
-			BotDifficulty     string  `json:"botDifficulty"`
-			ClientInSynch     bool    `json:"clientInSynch,omitempty"`
-			GameCustomization struct {
-				Regalia        string `json:"Regalia,omitempty"`
-				Perks          string `json:"perks,omitempty"`
-				SummonerEmotes string `json:"summonerEmotes,omitempty"`
-			} `json:"gameCustomization"`
-			Index                   float64     `json:"index,omitempty"`
-			LastSelectedSkinIndex   float64     `json:"lastSelectedSkinIndex"`
-			Locale                  interface{} `json:"locale"`
-			Minor                   bool        `json:"minor,omitempty"`
-			OriginalAccountNumber   float64     `json:"originalAccountNumber,omitempty"`
-			OriginalPlatformId      string      `json:"originalPlatformId,omitempty"`
-			PartnerId               string      `json:"partnerId,omitempty"`
-			PickMode                float64     `json:"pickMode"`
-			PickTurn                float64     `json:"pickTurn"`
-			ProfileIconId           float64     `json:"profileIconId,omitempty"`
-			Puuid                   string      `json:"puuid,omitempty"`
-			QueueRating             float64     `json:"queueRating,omitempty"`
-			RankedTeamGuest         bool        `json:"rankedTeamGuest,omitempty"`
-			SelectedPosition        interface{} `json:"selectedPosition"`
-			SelectedRole            interface{} `json:"selectedRole"`
-			SummonerId              float64     `json:"summonerId,omitempty"`
-			SummonerInternalName    string      `json:"summonerInternalName"`
-			SummonerName            string      `json:"summonerName"`
-			TeamOwner               bool        `json:"teamOwner,omitempty"`
-			TeamParticipantId       interface{} `json:"teamParticipantId"`
-			TeamRating              float64     `json:"teamRating,omitempty"`
-			TimeAddedToQueue        interface{} `json:"timeAddedToQueue"`
-			TimeChampionSelectStart float64     `json:"timeChampionSelectStart,omitempty"`
-			TimeGameCreated         float64     `json:"timeGameCreated,omitempty"`
-			TimeMatchmakingStart    float64     `json:"timeMatchmakingStart,omitempty"`
-			VoterRating             float64     `json:"voterRating,omitempty"`
-			BotSkillLevel           float64     `json:"botSkillLevel,omitempty"`
-			ChampionId              interface{} `json:"championId"`
-			Role                    interface{} `json:"role"`
-			Spell1Id                interface{} `json:"spell1Id"`
-			Spell2Id                interface{} `json:"spell2Id"`
-			TeamId                  string      `json:"teamId,omitempty"`
-		} `json:"teamOne"`
-		TeamTwo []struct {
-			BotDifficulty     string      `json:"botDifficulty"`
-			BotSkillLevel     float64     `json:"botSkillLevel"`
-			ChampionId        interface{} `json:"championId"`
-			GameCustomization struct {
-			} `json:"gameCustomization"`
-			LastSelectedSkinIndex float64     `json:"lastSelectedSkinIndex"`
-			Locale                interface{} `json:"locale"`
-			PickMode              float64     `json:"pickMode"`
-			PickTurn              float64     `json:"pickTurn"`
-			Role                  interface{} `json:"role"`
-			Spell1Id              interface{} `json:"spell1Id"`
-			Spell2Id              interface{} `json:"spell2Id"`
-			SummonerInternalName  string      `json:"summonerInternalName"`
-			SummonerName          string      `json:"summonerName"`
-			TeamId                string      `json:"teamId"`
-		} `json:"teamTwo"`
+		SpectatorsAllowed bool       `json:"spectatorsAllowed"`
+		TeamOne           []TeamInfo `json:"teamOne"`
+		TeamTwo           []TeamInfo `json:"teamTwo"`
 	} `json:"gameData"`
 	GameDodge struct {
 		DodgeIds []interface{} `json:"dodgeIds"`
@@ -472,4 +414,48 @@ type SummonerInProcess struct {
 		} `json:"properties"`
 	} `json:"map"`
 	Phase string `json:"phase"`
+}
+
+type TeamInfo struct {
+	AccountId         float64 `json:"accountId,omitempty"`
+	AdjustmentFlags   float64 `json:"adjustmentFlags,omitempty"`
+	BotDifficulty     string  `json:"botDifficulty"`
+	ClientInSynch     bool    `json:"clientInSynch,omitempty"`
+	GameCustomization struct {
+		Regalia        string `json:"Regalia,omitempty"`
+		Perks          string `json:"perks,omitempty"`
+		SummonerEmotes string `json:"summonerEmotes,omitempty"`
+	} `json:"gameCustomization"`
+	Index                   float64     `json:"index,omitempty"`
+	LastSelectedSkinIndex   float64     `json:"lastSelectedSkinIndex"`
+	Locale                  interface{} `json:"locale"`
+	Minor                   bool        `json:"minor,omitempty"`
+	OriginalAccountNumber   float64     `json:"originalAccountNumber,omitempty"`
+	OriginalPlatformId      string      `json:"originalPlatformId,omitempty"`
+	PartnerId               string      `json:"partnerId,omitempty"`
+	PickMode                float64     `json:"pickMode"`
+	PickTurn                float64     `json:"pickTurn"`
+	ProfileIconId           float64     `json:"profileIconId,omitempty"`
+	Puuid                   string      `json:"puuid,omitempty"`
+	QueueRating             float64     `json:"queueRating,omitempty"`
+	RankedTeamGuest         bool        `json:"rankedTeamGuest,omitempty"`
+	SelectedPosition        interface{} `json:"selectedPosition"`
+	SelectedRole            interface{} `json:"selectedRole"`
+	SummonerId              float64     `json:"summonerId,omitempty"`
+	SummonerInternalName    string      `json:"summonerInternalName"`
+	SummonerName            string      `json:"summonerName"`
+	TeamOwner               bool        `json:"teamOwner,omitempty"`
+	TeamParticipantId       interface{} `json:"teamParticipantId"`
+	TeamRating              float64     `json:"teamRating,omitempty"`
+	TimeAddedToQueue        interface{} `json:"timeAddedToQueue"`
+	TimeChampionSelectStart float64     `json:"timeChampionSelectStart,omitempty"`
+	TimeGameCreated         float64     `json:"timeGameCreated,omitempty"`
+	TimeMatchmakingStart    float64     `json:"timeMatchmakingStart,omitempty"`
+	VoterRating             float64     `json:"voterRating,omitempty"`
+	BotSkillLevel           float64     `json:"botSkillLevel,omitempty"`
+	ChampionId              interface{} `json:"championId"`
+	Role                    interface{} `json:"role"`
+	Spell1Id                interface{} `json:"spell1Id"`
+	Spell2Id                interface{} `json:"spell2Id"`
+	TeamId                  string      `json:"teamId,omitempty"`
 }

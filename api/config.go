@@ -6,7 +6,6 @@ import (
 )
 
 func (s *Client) AutoAccept() bool {
-	logger.Info("自动接受")
 	_, err := s.sendPostRequest(ConfigAutoAccept, nil)
 	return err == nil
 }
