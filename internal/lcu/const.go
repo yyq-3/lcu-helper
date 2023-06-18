@@ -16,3 +16,13 @@ const (
 	// reconnect 重新连接
 	reconnect = "Reconnect"
 )
+
+// 地图ID
+const (
+	// xiaGu 召唤师峡谷
+	xiaGu = 11
+	// 极地大乱斗
+	luanDou = 12
+	// 云顶
+	yunDing = 22
+)

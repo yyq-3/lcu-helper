@@ -3,6 +3,7 @@ package lcu
 import (
 	"github.com/gorilla/websocket"
 	"github.com/sacOO7/gowebsocket"
+	"lcu-helper/internal/models"
 	"lcu-helper/pkg/logger"
 	"sync"
 )
@@ -21,12 +22,14 @@ type ClientProcessInfo struct {
 }
 
 type GameInfo struct {
+	MySummonerId    int64
 	MySummonerPUuid string
 	Team            string
 	TeamOne         []string
 	TeamTwo         []string
 	ChatGroupId     string
 	ReConnect       bool
+	MapInfo         models.GameFlowSessionData
 }
 
 type HuntEvent struct {

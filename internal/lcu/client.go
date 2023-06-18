@@ -22,7 +22,7 @@ var (
 		Token:       "",
 	}
 	gameInfo        = &GameInfo{}
-	currentSummoner = &models.UserInfo{}
+	currentSummoner = &models.SummonerInfo{}
 )
 
 var (
@@ -67,9 +67,26 @@ func onTextMessage(message string, _ gowebsocket.Socket) {
 	switch lastResponse.Uri {
 	case global.GameFlowPhase:
 		gameFlowPhase(lastResponse.Data)
+	case global.GameFlowSession:
+		gameFlowSession(lastResponse.Data)
 	default:
 		//logger.Infof("%v", lastResponse)
 	}
+}
+
+// 游戏房间信息变化
+func gameFlowSession(data interface{}) {
+	var res models.GameFlowSessionData
+	marshal, err := json.Marshal(data)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(marshal, &res)
+	if err != nil {
+		return
+	}
+	gameInfo.MapInfo = res
+	logger.Infof("切换模式，当前模式[%s]", res.GameData.Queue.Name)
 }
 
 // 游戏状态切换
@@ -80,6 +97,9 @@ func gameFlowPhase(data interface{}) {
 	}
 	logger.Infof("游戏状态切换，当前状态：%s", status)
 	if champSelect == status {
+		if gameInfo.MapInfo.GameData.Queue.MapId == yunDing {
+			return
+		}
 		// 英雄选择页面
 		handlerChampSelect()
 	} else if matchmaking == status {
@@ -223,17 +243,83 @@ func handlerChampSelect() {
 		// every 500ms call
 		time.Sleep(time.Millisecond * 500)
 	}
-	time.Sleep(time.Second * 3)
 	// 读取队友信息
-
+	readTeamSummonerHistory()
 	// 计算得分 -》 入库 -》 保存
 
-	// 推送公屏
-	apiClient.SendMessage2Group(gameInfo.ChatGroupId, "send message -- current msg from opgg")
 	// 秒选英雄
 
 	// 自动天赋
 
+}
+
+// 读取团队召唤师对局历史
+func readTeamSummonerHistory() {
+	for {
+		allUser := apiClient.GetAllSummonerByRoomId(gameInfo.ChatGroupId)
+		if allUser != nil && len(*allUser) > 0 {
+			for _, id := range *allUser {
+				//if id == gameInfo.MySummonerId {
+				//	continue
+				//}
+				go func(id int64) {
+					summonerInfo := apiClient.GetSummonerInfoById(id)
+					if summonerInfo == nil {
+						logger.Infof("玩家%d信息获取失败", id)
+						return
+					}
+					puuid := summonerInfo.Puuid
+					for i := 0; i < 5; i++ {
+						lolHistory := apiClient.GetSummonerGradeByPUuidForLol(puuid)
+						if lolHistory != nil {
+							analyseLolHistory(lolHistory, summonerInfo)
+							break
+						}
+						logger.Info("正在进行战绩查询重试")
+						time.Sleep(time.Second)
+					}
+				}(id)
+			}
+			break
+		}
+		time.Sleep(time.Millisecond * 500)
+	}
+}
+
+// 分析玩家历史记录并发送公屏
+func analyseLolHistory(history *models.MatchHistoryLol, summonerInfo *models.SummonerInfo) {
+	msgTemplate := "最近使用[%d],战绩【%d/%d/%d】,输出%d,补兵%d,经济%d,经济转换率%s%%"
+	res := make([]string, 5)
+	message := ""
+	if summonerInfo.NameChangeFlag {
+		message = fmt.Sprintf("玩家【%s】%d级,改过名字,原名称【%s】\n", summonerInfo.DisplayName, summonerInfo.SummonerLevel, summonerInfo.InternalName)
+	} else {
+		message = fmt.Sprintf("玩家【%s】%d级\n", summonerInfo.DisplayName, summonerInfo.SummonerLevel)
+	}
+
+	for i := 0; i < 5; i++ {
+		game := history.Games.Games[i]
+		participant := game.Participants[0]
+		championId := participant.ChampionId
+		kills := participant.Stats.Kills
+		assists := participant.Stats.Assists
+		deaths := participant.Stats.Deaths
+		totalDamageDealtToChampions := participant.Stats.TotalDamageDealtToChampions
+		totalMinionsKilled := participant.Stats.TotalMinionsKilled
+		goldEarned := participant.Stats.GoldEarned
+		res = append(res,
+			fmt.Sprintf(msgTemplate,
+				championId, kills, assists, deaths,
+				totalDamageDealtToChampions, totalMinionsKilled, goldEarned,
+				fmt.Sprintf("%.3f", float64(totalDamageDealtToChampions*100)/float64(goldEarned))),
+		)
+	}
+	for _, msg := range res {
+		message += msg
+		message += "\n"
+	}
+	// 推送公屏
+	apiClient.SendMessage2Group(gameInfo.ChatGroupId, message)
 }
 
 func onConnected(socket gowebsocket.Socket) {
@@ -246,6 +332,7 @@ func onConnected(socket gowebsocket.Socket) {
 		if currentSummoner.SummonerId != 0 {
 			logger.Infof("%v", currentSummoner)
 			gameInfo.MySummonerPUuid = currentSummoner.Puuid
+			gameInfo.MySummonerId = currentSummoner.SummonerId
 			break
 		}
 	}

@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type UserInfo struct {
+type SummonerInfo struct {
 	AccountId                   int64  `json:"accountId"`
 	DisplayName                 string `json:"displayName"`
 	InternalName                string `json:"internalName"`

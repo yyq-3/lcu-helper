@@ -26,3 +26,9 @@ type ChampionSelectionEvent struct {
 		} `json:"theirTeam"`
 	} `json:"data"`
 }
+
+type RiotChampionInfo struct {
+}
+
+type ChampionInfo struct {
+}

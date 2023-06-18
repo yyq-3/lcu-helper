@@ -29,3 +29,14 @@ type (
 		Type           string    `json:"type"`
 	}
 )
+type ChatHistory struct {
+	Body                     string    `json:"body"`
+	FromId                   string    `json:"fromId"`
+	FromObfuscatedSummonerId int       `json:"fromObfuscatedSummonerId"`
+	FromPid                  string    `json:"fromPid"`
+	FromSummonerId           int64     `json:"fromSummonerId"`
+	Id                       string    `json:"id"`
+	IsHistorical             bool      `json:"isHistorical"`
+	Timestamp                time.Time `json:"timestamp"`
+	Type                     string    `json:"type"`
+}

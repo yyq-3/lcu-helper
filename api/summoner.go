@@ -13,8 +13,8 @@ const (
 )
 
 // GetCurrentSummonerInfo 获取当前召唤师信息
-func (s *Client) GetCurrentSummonerInfo() *models.UserInfo {
-	var user models.UserInfo
+func (s *Client) GetCurrentSummonerInfo() *models.SummonerInfo {
+	var user models.SummonerInfo
 	data, err := s.sendGetRequest(SummonerCurrent)
 	if err != nil {
 		logger.Infof("获取召唤师信息失败, %s", err.Error())
@@ -40,18 +40,6 @@ func (s *Client) GetCurrentGameAllSummoner() *models.SummonerInProcess {
 		return nil
 	}
 	return &res
-}
-
-func (s *Client) SummonerGradeQuery(page, size int, puuid string) *models.UserInfo {
-	//data, err := s.sendPostRequest(fmt.Sprintf(SummonerRecordByPuuid, puuid, page, size), nil)
-	//if err != nil {
-	//	return
-	//}
-	//err = json.Unmarshal(data)
-	//if err != nil {
-	//	return
-	//}
-	return nil
 }
 
 // GetSummonerGradeByPUuidForLol 通过PUuid查询玩家近十场LOL战绩
@@ -81,4 +69,19 @@ func (s *Client) GetSummonerGradeByPUuidForTft(pUuid string) *models.MatchHistor
 		return nil
 	}
 	return &tftRes
+}
+
+// GetSummonerInfoById
+// summonerId获取召唤师信息
+func (s *Client) GetSummonerInfoById(id int64) *models.SummonerInfo {
+	var res models.SummonerInfo
+	data, err := s.sendGetRequest(fmt.Sprintf(SummonerInfoById, id))
+	if err != nil {
+		return nil
+	}
+	err = json.Unmarshal(data, &res)
+	if err != nil {
+		return nil
+	}
+	return &res
 }

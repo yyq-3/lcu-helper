@@ -8,8 +8,8 @@ const (
 	SummonerGameUser = "/lol-gameflow/v1/session"
 	// SUMMONER_INFO_BY_NAME 通过召唤师名称获取召唤师信息
 	SUMMONER_INFO_BY_NAME = "/lol-summoner/v1/summoners?name=%s"
-	// SUMMONER_INFO_BY_ID 通过召唤师Id查询召唤师信息
-	SUMMONER_INFO_BY_ID = "/lol-summoner/v1/summoners/%s"
+	// SummonerInfoById 通过召唤师Id查询召唤师信息
+	SummonerInfoById = "/lol-summoner/v1/summoners/%d"
 	// SUMMONER_INFO_BY_PUUID 通过Puuid获取召唤师信息
 	SUMMONER_INFO_BY_PUUID = "/lol-summoner/v2/summoners/puuid/%s"
 	// SummonerRecordByPuuid 通过puuid查询召唤师战绩
