@@ -67,6 +67,9 @@ const (
 // 英雄选择
 const (
 	CURRENT_CHAMP_SELECT = "/lol-champ-select/v1/current-champion"
+	// ChampionVersionData
+	// 英雄数据
+	ChampionVersionData = "https://game.gtimg.cn/images/lol/act/img/js/heroList/hero_list.js?ts=%d"
 )
 
 // tft

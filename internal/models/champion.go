@@ -32,3 +32,16 @@ type RiotChampionInfo struct {
 
 type ChampionInfo struct {
 }
+
+type ChampionVersionData struct {
+	Version string `json:"version"`
+	Hero    []Hero
+}
+
+type Hero struct {
+	Alias      string `json:"alias,omitempty"`
+	Id         string `json:"heroId"`
+	IsWeekFree string `json:"isWeekFree"`
+	Name       string `json:"name"`
+	Title      string `json:"title"`
+}

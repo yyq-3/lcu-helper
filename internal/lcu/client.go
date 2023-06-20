@@ -259,9 +259,9 @@ func readTeamSummonerHistory() {
 		allUser := apiClient.GetAllSummonerByRoomId(gameInfo.ChatGroupId)
 		if allUser != nil && len(*allUser) > 0 {
 			for _, id := range *allUser {
-				//if id == gameInfo.MySummonerId {
-				//	continue
-				//}
+				if id == gameInfo.MySummonerId {
+					continue
+				}
 				go func(id int64) {
 					summonerInfo := apiClient.GetSummonerInfoById(id)
 					if summonerInfo == nil {
@@ -288,7 +288,7 @@ func readTeamSummonerHistory() {
 
 // 分析玩家历史记录并发送公屏
 func analyseLolHistory(history *models.MatchHistoryLol, summonerInfo *models.SummonerInfo) {
-	msgTemplate := "最近使用[%d],战绩【%d/%d/%d】,输出%d,补兵%d,经济%d,经济转换率%s%%"
+	msgTemplate := "最近使用[%s],战绩【%d/%d/%d】,输出%d,补兵%d,经济%d,经济转换率%s%%"
 	res := make([]string, 5)
 	message := ""
 	if summonerInfo.NameChangeFlag {
@@ -309,7 +309,8 @@ func analyseLolHistory(history *models.MatchHistoryLol, summonerInfo *models.Sum
 		goldEarned := participant.Stats.GoldEarned
 		res = append(res,
 			fmt.Sprintf(msgTemplate,
-				championId, kills, assists, deaths,
+				global.ChampionData.Hero[championId+1].Name+"-"+global.ChampionData.Hero[championId+1].Title,
+				kills, assists, deaths,
 				totalDamageDealtToChampions, totalMinionsKilled, goldEarned,
 				fmt.Sprintf("%.3f", float64(totalDamageDealtToChampions*100)/float64(goldEarned))),
 		)
