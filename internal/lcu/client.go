@@ -12,6 +12,7 @@ import (
 	"lcu-helper/internal/util"
 	"lcu-helper/pkg/logger"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -255,7 +256,7 @@ func handlerChampSelect() {
 
 // 读取团队召唤师对局历史
 func readTeamSummonerHistory() {
-	for {
+	for i := 0; i < 5; i++ {
 		allUser := apiClient.GetAllSummonerByRoomId(gameInfo.ChatGroupId)
 		if allUser != nil && len(*allUser) > 0 {
 			for _, id := range *allUser {
@@ -282,6 +283,7 @@ func readTeamSummonerHistory() {
 			}
 			break
 		}
+		logger.Info("即将进行获取聊天记录重试")
 		time.Sleep(time.Millisecond * 500)
 	}
 }
@@ -296,8 +298,14 @@ func analyseLolHistory(history *models.MatchHistoryLol, summonerInfo *models.Sum
 	} else {
 		message = fmt.Sprintf("玩家【%s】%d级\n", summonerInfo.DisplayName, summonerInfo.SummonerLevel)
 	}
-
+	if len(history.Games.Games) == 0 {
+		message += "近期暂无对局"
+		goto sendMsg
+	}
 	for i := 0; i < 5; i++ {
+		if i >= len(history.Games.Games) {
+			break
+		}
 		game := history.Games.Games[i]
 		participant := game.Participants[0]
 		championId := participant.ChampionId
@@ -309,12 +317,14 @@ func analyseLolHistory(history *models.MatchHistoryLol, summonerInfo *models.Sum
 		goldEarned := participant.Stats.GoldEarned
 		res = append(res,
 			fmt.Sprintf(msgTemplate,
-				global.ChampionData.Hero[championId+1].Name+"-"+global.ChampionData.Hero[championId+1].Title,
+				strconv.Itoa(championId),
+				//global.ChampionData.Hero[championId+1].Name+"-"+global.ChampionData.Hero[championId+1].Title,
 				kills, assists, deaths,
 				totalDamageDealtToChampions, totalMinionsKilled, goldEarned,
 				fmt.Sprintf("%.3f", float64(totalDamageDealtToChampions*100)/float64(goldEarned))),
 		)
 	}
+sendMsg:
 	for _, msg := range res {
 		message += msg
 		message += "\n"
