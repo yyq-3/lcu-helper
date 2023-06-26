@@ -74,5 +74,6 @@ const (
 
 // tft
 const (
-	TftExternal = "/tft-external/v1/active-game"
+	TftExternal  = "/tft-external/v1/active-game"
+	TftMatchInfo = "/tft/v1/matches/{match_id}"
 )
