@@ -17,6 +17,7 @@ require (
 )
 
 require (
+	github.com/AllenDang/w32 v0.0.0-20180428130237-ad0a36d80adc // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
