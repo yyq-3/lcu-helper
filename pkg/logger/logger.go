@@ -12,6 +12,7 @@ import (
 )
 
 var myLog = new(MyLog)
+var upColor int
 
 func Initialize() {
 	logrus.SetLevel(logrus.TraceLevel)
@@ -53,7 +54,14 @@ func (mLog *MyLog) Format(entry *logrus.Entry) ([]byte, error) {
 
 func colorOut(msg string) string {
 	// 随机展示颜色
-	color := rand.Intn(7) + 31
+	color := 0
+	for {
+		color = rand.Intn(7) + 31
+		if color != upColor {
+			upColor = color
+			break
+		}
+	}
 	return fmt.Sprintf("\u001B[%dm%s\u001B[0m\n", color, msg)
 }
 

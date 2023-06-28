@@ -1,0 +1,26 @@
+### 未知api
+GET http://localhost:8080/tft-external/v1/active-game
+
+### 未知api
+GET http://localhost:8080/tft/v1/matches/1090
+
+### 获取局内玩家信息
+GET http://localhost:8080/lol-gameflow/v1/session
+
+###
+GET http://localhost:8080/lol-game-queues/v1/queues
+
+###
+POST http://localhost:8080/lol-chat/v1/conversations/c1~0ab3bf706f7dc02005e3c0fb038553cfc62fd1de/active
+content-Type: application/json
+
+{
+  "body": "123"
+}
+
+###
+GET http://localhost:8080/lol-chat/v1/conversations/c1~0ab3bf706f7dc02005e3c0fb038553cfc62fd1de/active
+
+
+###
+GET http://localhost:8080/lol-chat/v1/conversations

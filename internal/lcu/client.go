@@ -11,6 +11,7 @@ import (
 	"lcu-helper/internal/models"
 	"lcu-helper/internal/util"
 	"lcu-helper/pkg/logger"
+	"lcu-helper/pkg/tts"
 	"net/http"
 	"strconv"
 	"time"
@@ -174,7 +175,8 @@ func handlerLol(s *models.SummonerInProcess) {
 				time.Sleep(time.Second)
 			}
 			// 发送到游戏
-			apiClient.SendMessage2Game(msgTemplate)
+			//apiClient.SendMessage2Game(msgTemplate)
+			tts.Speak(msgTemplate)
 		}(puuid)
 	}
 }
@@ -260,9 +262,9 @@ func readTeamSummonerHistory() {
 		allUser := apiClient.GetAllSummonerByRoomId(gameInfo.ChatGroupId)
 		if allUser != nil && len(*allUser) > 0 {
 			for _, id := range *allUser {
-				if id == gameInfo.MySummonerId {
-					continue
-				}
+				//if id == gameInfo.MySummonerId {
+				//	continue
+				//}
 				go func(id int64) {
 					summonerInfo := apiClient.GetSummonerInfoById(id)
 					if summonerInfo == nil {
@@ -270,6 +272,7 @@ func readTeamSummonerHistory() {
 						return
 					}
 					puuid := summonerInfo.Puuid
+					// 查询战绩 查询不到重试五次
 					for i := 0; i < 5; i++ {
 						lolHistory := apiClient.GetSummonerGradeByPUuidForLol(puuid)
 						if lolHistory != nil {
@@ -294,14 +297,15 @@ func analyseLolHistory(history *models.MatchHistoryLol, summonerInfo *models.Sum
 	res := make([]string, 5)
 	message := ""
 	if summonerInfo.NameChangeFlag {
-		message = fmt.Sprintf("玩家【%s】%d级,改过名字,原名称【%s】\n", summonerInfo.DisplayName, summonerInfo.SummonerLevel, summonerInfo.InternalName)
+		message = fmt.Sprintf("玩家【%s】%d级,改过名字,原名称【%s】\r\n", summonerInfo.DisplayName, summonerInfo.SummonerLevel, summonerInfo.InternalName)
 	} else {
-		message = fmt.Sprintf("玩家【%s】%d级\n", summonerInfo.DisplayName, summonerInfo.SummonerLevel)
+		message = fmt.Sprintf("玩家【%s】%d级\r\n", summonerInfo.DisplayName, summonerInfo.SummonerLevel)
 	}
 	if len(history.Games.Games) == 0 {
 		message += "近期暂无对局"
 		goto sendMsg
 	}
+	// 取最近五场战绩进行分析
 	for i := 0; i < 5; i++ {
 		if i >= len(history.Games.Games) {
 			break
@@ -327,10 +331,14 @@ func analyseLolHistory(history *models.MatchHistoryLol, summonerInfo *models.Sum
 sendMsg:
 	for _, msg := range res {
 		message += msg
-		message += "\n"
+		message += "\r\n"
 	}
 	// 推送公屏
 	apiClient.SendMessage2Group(gameInfo.ChatGroupId, message)
+	go func() {
+		logger.Info(message)
+		tts.Speak(message)
+	}()
 }
 
 func onConnected(socket gowebsocket.Socket) {

@@ -30,6 +30,7 @@ type GameInfo struct {
 	ChatGroupId     string
 	ReConnect       bool
 	MapInfo         models.GameFlowSessionData
+	MatchId         string
 }
 
 type HuntEvent struct {
