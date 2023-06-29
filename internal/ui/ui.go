@@ -8,15 +8,18 @@ import (
 
 func Init() {
 	screenWidth, screenHeight := user32.GetScreenSize()
-	ig := giu.NewMasterWindow("lcu-helper",
+	masterWindow := giu.NewMasterWindow("lcu-helper",
 		screenWidth, screenHeight,
-		,
+		giu.MasterWindowFlagsNotResizable|giu.MasterWindowFlagsMaximized|giu.MasterWindowFlagsFloating|giu.MasterWindowFlagsFrameless|giu.MasterWindowFlagsTransparent,
 	)
-	ig.Run(loop)
+	masterWindow.SetBgColor(giu.Vec4ToRGBA(imgui.Vec4{X: 0, Y: 0, Z: 0, W: 0}))
+	masterWindow.Run(loop)
 }
 
 func loop() {
-	giu.SingleWindow().Layout(
-		giu.Label("Hello world from giu"),
-	)
+	//giu.SingleWindow().Layout(giu.Label("left top window"))
+	giu.Window("left top").Flags(
+		giu.WindowFlagsNoResize | giu.WindowFlagsNoMove | giu.WindowFlagsNoCollapse).Layout(
+		giu.Label("left top window"))
+	giu.Window("right top").Pos(-50, 0).Layout(giu.Label("left top window"))
 }
