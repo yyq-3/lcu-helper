@@ -1,0 +1,11 @@
+main {
+    color: rgba(0, 0, 0, 0);
+    background-color: yellow;
+    alpha: 10;
+    item-spacing: 80, 20;
+}
+
+button {
+    color: red;
+    button-color: yellow;
+}

@@ -3,6 +3,7 @@ package user32
 import (
 	"fmt"
 	"github.com/AllenDang/w32"
+	"lcu-helper/pkg/logger"
 	"syscall"
 	"unsafe"
 )
@@ -56,12 +57,13 @@ const (
 
 func FindWindow(className, windowName string) w32.HWND {
 	cnPtr, _ := syscall.UTF16PtrFromString(className)
-	wnPtr, _ := syscall.UTF16PtrFromString(className)
+	wnPtr, _ := syscall.UTF16PtrFromString(windowName)
 	return w32.FindWindowW(cnPtr, wnPtr)
 }
 
 func SetWindowTransparent(hwnd w32.HWND) {
 	oldStyle := w32.GetWindowLongPtr(hwnd, GWL_EXSTYLE)
 	newStyle := oldStyle | WS_EX_TRANSPARENT
-	w32.SetWindowLongPtr(hwnd, GWL_EXSTYLE, newStyle)
+	logger.Infof("old: %v, new:%v", oldStyle, newStyle)
+	logger.Infof("w32.SetWindowLongPtr(hwnd, GWL_EXSTYLE, newStyle) 执行结果: %v", w32.SetWindowLongPtr(hwnd, GWL_EXSTYLE, newStyle))
 }
