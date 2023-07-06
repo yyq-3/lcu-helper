@@ -2,8 +2,6 @@ package user32
 
 import (
 	"fmt"
-	"github.com/AllenDang/w32"
-	"lcu-helper/pkg/logger"
 	"syscall"
 	"unsafe"
 )
@@ -55,15 +53,12 @@ const (
 	WS_EX_TRANSPARENT = 0x00000020
 )
 
-func FindWindow(className, windowName string) w32.HWND {
-	cnPtr, _ := syscall.UTF16PtrFromString(className)
-	wnPtr, _ := syscall.UTF16PtrFromString(windowName)
-	return w32.FindWindowW(cnPtr, wnPtr)
+func GetWindowLongPtr(handle syscall.Handle, getType int) uintptr {
+	r1, _, _ := getWindowLongPtr.Call(uintptr(handle), uintptr(getType))
+	return r1
 }
 
-func SetWindowTransparent(hwnd w32.HWND) {
-	oldStyle := w32.GetWindowLongPtr(hwnd, GWL_EXSTYLE)
-	newStyle := oldStyle | WS_EX_TRANSPARENT
-	logger.Infof("old: %v, new:%v", oldStyle, newStyle)
-	logger.Infof("w32.SetWindowLongPtr(hwnd, GWL_EXSTYLE, newStyle) 执行结果: %v", w32.SetWindowLongPtr(hwnd, GWL_EXSTYLE, newStyle))
+func SetWindowLongPtr(handle syscall.Handle) uintptr {
+	r1, _, _ := setWindowLongPtr.Call(uintptr(handle))
+	return r1
 }
