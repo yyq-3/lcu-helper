@@ -23,4 +23,4 @@ GET http://localhost:8080/lol-chat/v1/conversations/c1~0ab3bf706f7dc02005e3c0fb0
 
 
 ###
-GET http://localhost:8080/lol-chat/v1/conversations
+GET http://localhost:8080/lol-match-history/v1/products/lol/98255012-e56f-5b4c-9bcb-17b83bd7d755/matches

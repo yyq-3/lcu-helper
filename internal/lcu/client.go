@@ -7,13 +7,16 @@ import (
 	"github.com/sacOO7/gowebsocket"
 	"github.com/thoas/go-funk"
 	"lcu-helper/api"
+	"lcu-helper/internal/db"
 	"lcu-helper/internal/global"
 	"lcu-helper/internal/models"
+	"lcu-helper/internal/route"
 	"lcu-helper/internal/util"
 	"lcu-helper/pkg/logger"
-	"lcu-helper/pkg/tts"
 	"net/http"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -23,15 +26,16 @@ var (
 		Port:        0,
 		Token:       "",
 	}
-	gameInfo        = &GameInfo{}
 	currentSummoner = &models.SummonerInfo{}
 )
 
 var (
 	apiClient    *api.Client
 	Socket       gowebsocket.Socket
-	lastResponse models.WsResponseResult
+	lastResponse *models.WsResponseResult
 )
+
+var eventFilterConfigs []*db.EventFilterConfigDO
 
 func Init() {
 	go initGameFlow()
@@ -66,14 +70,43 @@ func onTextMessage(message string, _ gowebsocket.Socket) {
 		logger.Info("解析客户端消息异常，异常信息 %s", err.Error())
 	}
 	//logger.Infof("%v", lastResponse)
+	if filterEvent2(lastResponse) {
+		return
+	}
+	r := route.NewRouter()
+	r.Route(lastResponse)
 	switch lastResponse.Uri {
 	case global.GameFlowPhase:
 		gameFlowPhase(lastResponse.Data)
 	case global.GameFlowSession:
 		gameFlowSession(lastResponse.Data)
 	default:
-		//logger.Infof("%v", lastResponse)
+		db.Insert(lastResponse.Data, lastResponse.EventType, lastResponse.Uri)
+		// logger.Infof("default未知客戶端消息：%v", lastResponse)
 	}
+}
+
+func filterEvent2(response *models.WsResponseResult) bool {
+	eventType := response.EventType
+	if eventType == "Delete" {
+		return true
+	}
+	uri := response.Uri
+	for _, config := range eventFilterConfigs {
+		if config.MatchRule == "left" {
+			if strings.HasPrefix(uri, config.Uri) {
+				return true
+			}
+		} else if config.MatchRule == "RegEx" {
+			result, err := regexp.MatchString(config.Uri, uri)
+			if err == nil && result {
+				return result
+			}
+		} else {
+			logger.Info("规则错误没有对应的rule")
+		}
+	}
+	return false
 }
 
 // 游戏房间信息变化
@@ -87,7 +120,7 @@ func gameFlowSession(data interface{}) {
 	if err != nil {
 		return
 	}
-	gameInfo.MapInfo = res
+	global.GameInfo.MapInfo = res
 	logger.Infof("切换模式，当前模式[%s]", res.GameData.Queue.Name)
 }
 
@@ -99,7 +132,7 @@ func gameFlowPhase(data interface{}) {
 	}
 	logger.Infof("游戏状态切换，当前状态：%s", status)
 	if champSelect == status {
-		if gameInfo.MapInfo.GameData.Queue.MapId == yunDing {
+		if global.GameInfo.MapInfo.GameData.Queue.MapId == yunDing {
 			return
 		}
 		// 英雄选择页面
@@ -117,13 +150,14 @@ func gameFlowPhase(data interface{}) {
 		handlerInProgress()
 	} else if none == status {
 		// 游戏大厅页面，清除上次游戏记录信息
-		gameInfo.clear()
+		global.GameInfo.Clear()
 	} else if reconnect == status {
 		apiClient.AutoConnect()
 	}
 }
 
 func handlerInProgress() {
+	go readAttackSpeed()
 	var summonerInProcess *models.SummonerInProcess
 	// if len(res) not eq 10, every 500ms call
 	for {
@@ -145,16 +179,20 @@ func handlerInProgress() {
 
 }
 
+func readAttackSpeed() {
+
+}
+
 // 处理非云顶游戏
 func handlerLol(s *models.SummonerInProcess) {
 	allPuuid := make([]string, 5)
-	msgTemplate := `敌方玩家【%s】最近战绩
-使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】
-使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】
-使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】
-使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】
-使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】`
-	if funk.ContainsString(gameInfo.TeamOne, s.GameData.TeamOne[0].Puuid) {
+	//	msgTemplate := `敌方玩家【%s】最近战绩
+	//使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】
+	//使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】
+	//使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】
+	//使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】
+	//使用英雄【%s】 战绩【%d/%d/%d】 经济转化率【功能暂未开发】`
+	if funk.ContainsString(global.GameInfo.TeamOne, s.GameData.TeamOne[0].Puuid) {
 		for _, team := range s.GameData.TeamTwo {
 			allPuuid = append(allPuuid, team.Puuid)
 		}
@@ -176,14 +214,14 @@ func handlerLol(s *models.SummonerInProcess) {
 			}
 			// 发送到游戏
 			//apiClient.SendMessage2Game(msgTemplate)
-			tts.Speak(msgTemplate)
+			//tts.Speak(msgTemplate)
 		}(puuid)
 	}
 }
 
 func handlerTft(s *models.SummonerInProcess) {
 	for _, teams := range s.GameData.TeamOne {
-		if teams.Puuid == gameInfo.MySummonerPUuid {
+		if teams.Puuid == global.GameInfo.MySummonerPUuid {
 			continue
 		}
 		// 利用携程查询每个人的对局信息
@@ -240,14 +278,14 @@ func handlerChampSelect() {
 		if groupList != nil && len(groupList) > 0 {
 			logger.Infof("获取到聊天组ID：%s", groupList[0].Id)
 			// save id to global
-			gameInfo.ChatGroupId = groupList[0].Id
+			global.GameInfo.ChatGroupId = groupList[0].Id
 			break
 		}
 		// every 500ms call
 		time.Sleep(time.Millisecond * 500)
 	}
 	// 读取队友信息
-	readTeamSummonerHistory()
+	// readTeamSummonerHistory()
 	// 计算得分 -》 入库 -》 保存
 
 	// 秒选英雄
@@ -259,7 +297,7 @@ func handlerChampSelect() {
 // 读取团队召唤师对局历史
 func readTeamSummonerHistory() {
 	for i := 0; i < 5; i++ {
-		allUser := apiClient.GetAllSummonerByRoomId(gameInfo.ChatGroupId)
+		allUser := apiClient.GetAllSummonerByRoomId(global.GameInfo.ChatGroupId)
 		if allUser != nil && len(*allUser) > 0 {
 			for _, id := range *allUser {
 				//if id == gameInfo.MySummonerId {
@@ -334,15 +372,14 @@ sendMsg:
 		message += "\r\n"
 	}
 	// 推送公屏
-	apiClient.SendMessage2Group(gameInfo.ChatGroupId, message)
-	go func() {
-		logger.Info(message)
-		tts.Speak(message)
-	}()
+	//apiClient.SendMessage2Group(gameInfo.ChatGroupId, message)
 }
 
 func onConnected(socket gowebsocket.Socket) {
 	logger.Info("连接到客户端成功!")
+	configDO := db.EventFilterConfigDO{}
+	eventFilterConfigs = configDO.QueryAll()
+	logger.Infof("获取%d条规则", len(eventFilterConfigs))
 	go startProxy()
 	apiClient = api.Init(ClientUx.ApiAddr)
 	for {
@@ -350,11 +387,12 @@ func onConnected(socket gowebsocket.Socket) {
 		currentSummoner = apiClient.GetCurrentSummonerInfo()
 		if currentSummoner.SummonerId != 0 {
 			logger.Infof("%v", currentSummoner)
-			gameInfo.MySummonerPUuid = currentSummoner.Puuid
-			gameInfo.MySummonerId = currentSummoner.SummonerId
+			global.GameInfo.MySummonerPUuid = currentSummoner.Puuid
+			global.GameInfo.MySummonerId = currentSummoner.SummonerId
 			break
 		}
 	}
+	// 获取所有地图信息
 	// 修改rank
 	apiClient.ModifyRank()
 	socket.SendText("[5, \"OnJsonApiEvent\"]")

@@ -25,8 +25,8 @@ func (s *Client) GetChatGroup() []models.Conversation {
 func (s *Client) SendMessage2Group(chatGroupId, msg string) {
 	reqBody := map[string]string{}
 	reqBody["body"] = msg
-	_, err := s.sendPostRequest(fmt.Sprintf(ChatSendMessageToChatGroup, chatGroupId), reqBody)
-	//logger.Info(util.Byte2str(data))
+	data, err := s.sendPostRequest(fmt.Sprintf(ChatSendMessageToChatGroup, chatGroupId), reqBody)
+	logger.Info(util.Byte2str(data))
 	if err != nil {
 		logger.Infof("发送消息失败：失败原因：%s", err.Error())
 		return
@@ -39,13 +39,12 @@ func (s *Client) SendMessage2Group(chatGroupId, msg string) {
 func (s *Client) SendMessage2Game(msg string) {
 	reqBody := map[string]string{}
 	reqBody["body"] = msg
-	data, err := s.sendPostRequest(ChatSendMessageToGameProcess, reqBody)
+	data, err := s.sendPutRequest(ChatSendMessageToGameProcess, reqBody)
 	logger.Info(util.Byte2str(data))
 	if err != nil {
 		logger.Infof("发送消息失败：失败原因：%s", err.Error())
 		return
 	}
-	logger.Infof("消息发送成功，发送内容：%s", msg)
 }
 
 // GetAllSummonerByRoomId

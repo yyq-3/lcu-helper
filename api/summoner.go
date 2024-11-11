@@ -85,3 +85,26 @@ func (s *Client) GetSummonerInfoById(id int64) *models.SummonerInfo {
 	}
 	return &res
 }
+
+// 查询riotId
+func (s *Client) GetSummonerRiotIdByPuuid(puuid string) {
+	data, err := s.sendGetRequest(fmt.Sprintf(SummonerRiotIdByPuuid, puuid))
+	if err != nil {
+		logger.Infof("获取召唤师信息失败, %s", err.Error())
+		return
+	}
+	logger.Infof("riotId=%s", data)
+}
+
+// 通过puuid查询召唤师信息
+
+func (s *Client) GetSummonerInfoByPuuid(puuid string) *models.SummonerInfo {
+	var res *models.SummonerInfo
+	data, err := s.sendGetRequest(fmt.Sprintf(SUMMONER_INFO_BY_PUUID, puuid))
+	if err != nil {
+		logger.Infof("获取召唤师信息失败, %s", err.Error())
+		return nil
+	}
+	_ = json.Unmarshal(data, &res)
+	return res
+}

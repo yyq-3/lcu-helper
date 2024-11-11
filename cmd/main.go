@@ -1,12 +1,11 @@
 package main
 
 import (
+	"lcu-helper/internal/db"
 	"lcu-helper/internal/lcu"
 	"lcu-helper/internal/listener"
 	"lcu-helper/internal/os/windows/admin"
-	"lcu-helper/internal/ui"
 	"lcu-helper/pkg/logger"
-	"lcu-helper/pkg/tts"
 	"os"
 	"os/signal"
 	"syscall"
@@ -26,13 +25,12 @@ func main() {
 	}()
 	// 申请管理员权限
 	admin.WithAdminRun()
-	// 创建窗口
-	go func() {
-		ui.Init()
-	}()
+	// 连接数据库
+	db.Init()
 	// 初始化语音助手
-	tts.Init()
+	// tts.Init()
 	// start process listener
+	logger.Info("检测客户端是否启动")
 	listener.StartClientListen()
 	// 初始化lcu
 	lcu.Init()
@@ -47,6 +45,6 @@ func exit() {
 	if lcu.Socket.IsConnected {
 		lcu.Socket.Close()
 	}
-	tts.Exit()
+	// tts.Exit()
 	os.Exit(0)
 }

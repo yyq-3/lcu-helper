@@ -5,9 +5,11 @@ import "time"
 type SummonerInfo struct {
 	AccountId                   int64  `json:"accountId"`
 	DisplayName                 string `json:"displayName"`
+	GameName                    string `json:"gameName"`
 	InternalName                string `json:"internalName"`
 	NameChangeFlag              bool   `json:"nameChangeFlag"`
 	PercentCompleteForNextLevel int    `json:"percentCompleteForNextLevel"`
+	Privacy                     string `json:"privacy"`
 	ProfileIconId               int    `json:"profileIconId"`
 	Puuid                       string `json:"puuid"`
 	RerollPoints                struct {

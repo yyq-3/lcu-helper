@@ -39,7 +39,6 @@ func handler(client *lcu.ClientProcessInfo) bool {
 		logger.Info("开始连接游戏客户端........")
 		return true
 	} else {
-		logger.Info("未检测到客户端启动")
 		return false
 	}
 }

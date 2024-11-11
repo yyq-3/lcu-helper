@@ -3,6 +3,7 @@ package api
 // 召唤师相关
 const (
 	// SummonerCurrent 获取当前召唤师信息
+	// 24年名字修改后不太适用，查询出为原始名字，官方建议替换为puuid查询
 	SummonerCurrent = "/lol-summoner/v1/current-summoner"
 	// SummonerGameUser 获取本局游戏内所有玩家信息
 	SummonerGameUser = "/lol-gameflow/v1/session"
@@ -14,6 +15,10 @@ const (
 	SUMMONER_INFO_BY_PUUID = "/lol-summoner/v2/summoners/puuid/%s"
 	// SummonerRecordByPuuid 通过puuid查询召唤师战绩
 	SummonerRecordByPuuid = "/lol-match-history/v1/products/%s/%s/matches"
+	// 从pid获取riot ID （riotId 名字#id）
+	SummonerRiotIdByPuuid = "/account/v1/accounts/by-puuid/%s"
+	// Returns the player name. 返回玩家名称。 /liveclientdata/activeplayername
+	// Get all available data. 获取所有可用数据。 /liveclientdata/allgamedata
 )
 
 // 聊天相关
@@ -42,6 +47,8 @@ const (
 	GAME_CREATE_HOME = "/lol-lobby/v2/lobby"
 	// GameLiveClientData get请求 获取实时数据
 	GameLiveClientData = "/liveclientdata/activeplayer"
+	// All Players 所有玩家 /liveclientdata/playerlist
+
 )
 
 // 设置相关
@@ -76,4 +83,36 @@ const (
 const (
 	TftExternal  = "/tft-external/v1/active-game"
 	TftMatchInfo = "/tft/v1/matches/{match_id}"
+)
+
+// 地图
+const (
+	Queues = "/lol-game-queues/v1/queues"
+)
+
+// Events 事件
+const (
+	Event_liveclientdata_eventdata = "/liveclientdata/eventdata"
+	// 好友状态
+	Event_friend_info_change = "/lol-hovercard/v1/friend-info"
+	// 任务通知
+	Event_missions_service = "/lol-missions/v1/series"
+	// 不知道什么
+	Event_npe_tutorial = "/lol-npe-tutorial-path/v1/tutorials"
+	// 更新好友总数
+	Event_friend_counts = "/lol-chat/v1/friend-counts"
+	// 好友创建房间
+	Event_buddies = "/lol-game-client-chat/v1/buddies"
+	// 好友创建房间不知道哪里的
+	Event_buddies_v2 = "/lol-game-client-chat/v2/buddies"
+	// 删除聊天窗口
+	Event_Delete_conversations_active = "/lol-chat/v1/conversations/active"
+	// 建议玩家
+	Event_suggested_players = "/lol-suggested-players/v1/suggested-players"
+	// 地图信息
+	Event_challenges = "lol-challenges/v1/challenges/local-player"
+)
+
+const (
+	Filter_key = "%!p(MISSING)vp.net"
 )

@@ -22,5 +22,8 @@ func init() {
 		fmt.Printf("英雄数据初始化失败,失败原因: %s\n", err.Error())
 		return
 	}
+	for _, hero := range global.ChampionData.Hero {
+		global.ChampionDataMap[hero.Id] = hero
+	}
 	fmt.Printf("当前版本[%s],英雄数据初始化完成\n", global.ChampionData.Version)
 }

@@ -31,6 +31,8 @@ func Initialize() {
 		Infof("打开日志文件失败,失败原因:%s", err.Error())
 		logrus.SetOutput(colorable.NewColorableStdout())
 		return
+	} else {
+		Infof("日志文件路径: %S", name)
 	}
 	logrus.SetOutput(io.MultiWriter(colorable.NewColorableStdout(), colorable.NewColorable(file)))
 }

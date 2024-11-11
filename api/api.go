@@ -9,6 +9,7 @@ type Client struct {
 
 type Summoner interface {
 	GetCurrentSummonerInfo() *models.SummonerInfo
+	GetSummonerInfoByPuuid(puuid string) *models.SummonerInfo
 	GetCurrentGameAllSummoner() *models.SummonerInProcess
 	GetSummonerGradeByPUuidForTft(pUuid string) *models.MatchHistoryTft
 	GetSummonerGradeByPUuidForLol(pUuid string) *models.MatchHistoryLol
